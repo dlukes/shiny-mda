@@ -22,13 +22,11 @@ shinyUI(pageWithSidebar(
     textInput("cql", "CQL", value="[]"),
     actionButton("search", "Hledat v chunku", onclick="kontextSearch()"),
     tags$script(src="kontextSearch.js")
-    # h4("Brushed points"),
-    # verbatimTextOutput("brush_info")
   ),
   
   mainPanel(
     tags$style("#mdaplot{height:90vh !important;}"),
-    plotOutput("mdaplot",  # height=720, width=720,
+    plotOutput("mdaplot",
                click="mdaplot_click",
                dblclick="mdaplot_dblclick",
                brush=brushOpts(

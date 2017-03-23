@@ -38,7 +38,6 @@ shinyServer(function(input, output, session) {
     ggplot(filtered, aes_string(fx, fy, color="DIVISION")) +
       geom_point(aes_string(fx, fy), transform(factors, MODE=NULL), color="grey", alpha=.2) +
       geom_point(aes_string(shape="MODE"), alpha=.4, size=5) +
-      # geom_text(aes_string(label="X"), alpha=0) +
       theme_bw() +
       scale_color_manual(values=palette, drop=FALSE) +
       scale_shape_discrete(drop=FALSE) +
@@ -77,10 +76,6 @@ shinyServer(function(input, output, session) {
                  p(b("CLASS:"), point$CLASS),
                  p(b("ID:"), span(id, id="chunk_id"))))
   })
-  
-  # output$brush_info <- renderPrint({
-  #   brushedPoints(data()$factors, input$mdaplot_brush)
-  # })
   
   output$fx <- reactive(input$fx)
   output$fy <- reactive(input$fy)
