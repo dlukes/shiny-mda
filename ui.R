@@ -7,10 +7,10 @@ shinyUI(pageWithSidebar(
     # bookmarking probably requires some more setup, or maybe it fails because of the initial error
     # in the app...?
     # bookmarkButton(),
-    fileInput('csv', 'Nahrát vlastní faktory:',
+    fileInput("csv", "Nahrát vlastní faktory:",
               accept=c(
-                'text/csv',
-                'text/comma-separated-values'
+                "text/csv",
+                "text/comma-separated-values"
               )
     ),
     selectInput("fx", "Osa X", choices=c()),
