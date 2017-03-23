@@ -20,7 +20,7 @@ shinyUI(pageWithSidebar(
     h4("Vybraný bod:"),
     htmlOutput("click_info"),
     textInput("cql", "CQL", value="[]"),
-    actionButton("search", "Hledat v chunku", onclick="kontextSearch()"),
+    actionButton("search", "Hledat", onclick="kontextSearch()"),
     tags$script(src="kontextSearch.js")
   ),
   
