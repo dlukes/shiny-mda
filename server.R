@@ -63,11 +63,11 @@ shinyServer(function(input, output, session) {
     # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
     # were a base graphics plot, we'd need those.
     point <- nearPoints(data()$factors, input$mdaplot_click, addDist=TRUE)[1, ]
-    kfx <- input$fx
-    kfy <- input$fy
-    id <- point[, "X"]
-    withTags(div(p(b(paste0(kfx, ":")), point[kfx]),
-                 p(b(paste0(kfy, ":")), point[kfy]),
+    fx <- input$fx
+    fy <- input$fy
+    id <- point$X
+    withTags(div(p(b(paste0(fx, ":")), point[[fx]]),
+                 p(b(paste0(fy, ":")), point[[fy]]),
                  p(b("MODE:"), point$MODE),
                  p(b("DIVISION:"), point$DIVISION_ORIG),
                  p(b("SUPERCLASS:"), point$SUPERCLASS),
