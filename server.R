@@ -66,8 +66,6 @@ shinyServer(function(input, output, session) {
     kfx <- input$fx
     kfy <- input$fy
     id <- point[, "X"]
-    query <- paste0("q=", URLencode(paste0('q[] within <chunk id="', if (is.na(id)) ".*" else id, '"/>'), reserved=TRUE))
-    href <- paste0("https://kontext.korpus.cz/view?corpname=koditex&default_attr=word&", query)
     withTags(div(p(b(paste0(kfx, ":")), point[kfx]),
                  p(b(paste0(kfy, ":")), point[kfy]),
                  p(b("MODE:"), point$MODE),
