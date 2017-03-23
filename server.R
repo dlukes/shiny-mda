@@ -75,8 +75,7 @@ shinyServer(function(input, output, session) {
                  p(b("DIVISION:"), point$DIVISION_ORIG),
                  p(b("SUPERCLASS:"), point$SUPERCLASS),
                  p(b("CLASS:"), point$CLASS),
-                 p(b("ID:"), id),
-                 p(a("KonText", href=href, target="_blank"))))
+                 p(b("ID:"), span(id, id="chunk_id"))))
   })
   
   # output$brush_info <- renderPrint({

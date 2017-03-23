@@ -18,7 +18,10 @@ shinyUI(pageWithSidebar(
     checkboxGroupInput("mode", "Mode", choices=c()),
     checkboxGroupInput("division", "Division", choices=c()),
     h4("Vybraný bod:"),
-    htmlOutput("click_info")
+    htmlOutput("click_info"),
+    textInput("cql", "CQL", value="[]"),
+    actionButton("search", "Hledat v chunku", onclick="kontextSearch()"),
+    tags$script(src="kontextSearch.js")
     # h4("Brushed points"),
     # verbatimTextOutput("brush_info")
   ),
