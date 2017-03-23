@@ -16,7 +16,7 @@ shinyServer(function(input, output, session) {
       csv <- input$csv$datapath
       # name <- input$csv$name
     }
-    
+
     df <- read.csv(csv)
     factors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(df), value=TRUE, invert=TRUE)
     df$DIVISION <- factor(df$DIVISION, c("int", "nin", "mul", "uni", "fic", "nfc", "nmg", "pri"),
@@ -32,7 +32,7 @@ shinyServer(function(input, output, session) {
   })
 
   ranges <- reactiveValues(x=NULL, y=NULL)
-  
+
   output$mdaplot <- renderPlot({
     data <- data()
     df <- data$df
@@ -49,7 +49,7 @@ shinyServer(function(input, output, session) {
       # coord_fixed seems to break location reporting for click interaction...?
       coord_cartesian(xlim=ranges$x, ylim=ranges$y)
   })
-  
+
   # When a double-click happens, check if there's a brush on the plot.
   # If so, zoom to the brush bounds; if not, reset the zoom.
   observeEvent(input$mdaplot_dblclick, {
@@ -57,13 +57,13 @@ shinyServer(function(input, output, session) {
     if (!is.null(brush)) {
       ranges$x <- c(brush$xmin, brush$xmax)
       ranges$y <- c(brush$ymin, brush$ymax)
-      
+
     } else {
       ranges$x <- NULL
       ranges$y <- NULL
     }
   })
-  
+
   output$click_info <- renderPrint({
     data <- data()
     # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
@@ -81,7 +81,7 @@ shinyServer(function(input, output, session) {
                  p(b("CLASS:"), point$CLASS),
                  p(b("ID:"), span(id, id="chunk_id"))))
   })
-  
+
   output$fx <- reactive(input$fx)
   output$fy <- reactive(input$fy)
 })
