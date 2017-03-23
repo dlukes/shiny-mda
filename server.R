@@ -1,4 +1,3 @@
-library(dplyr)
 library(ggplot2)
 library(Cairo)   # For nicer ggplot2 output when deployed on Linux
 
@@ -20,13 +19,13 @@ shinyServer(function(input, output, session) {
     
     df <- read.csv(csv)
     factors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(df), value=TRUE, invert=TRUE)
-    df <- rename(df, DIVISION_ORIG=DIVISION)
-    df$DIVISION <- factor(paste(df$MODE, df$DIVISION_ORIG))
+    df$DIVISION <- factor(df$DIVISION, c("int", "nin", "mul", "uni", "fic", "nfc", "nmg", "pri"),
+                          c("spo int", "spo nin", "web mul", "web uni", "wri fic", "wri nfc", "wri nmg", "wri pri"))
     updateSelectInput(session, "fx", choices=factors, selected=factors[1])
     updateSelectInput(session, "fy", choices=factors, selected=factors[2])
     modes <- levels(df$MODE)
     updateCheckboxGroupInput(session, "mode", choices=modes, selected=modes, inline=TRUE)
-    divisions <- levels(df$DIVISION_ORIG)
+    divisions <- levels(df$DIVISION)
     updateCheckboxGroupInput(session, "division", choices=divisions, inline=TRUE)
 
     list(df=df, factors=factors, modes=modes, divisions=divisions)
@@ -40,7 +39,7 @@ shinyServer(function(input, output, session) {
     factors <- data$factors
     fx <- defaultIfEmptyString(input$fx, factors[1])
     fy <- defaultIfEmptyString(input$fy, factors[2])
-    filtered <- subset(df, MODE %in% input$mode | DIVISION_ORIG %in% input$division)
+    filtered <- subset(df, MODE %in% input$mode | DIVISION %in% input$division)
     ggplot(filtered, aes_string(fx, fy, color="DIVISION")) +
       geom_point(aes_string(fx, fy), transform(df, MODE=NULL), color="grey", alpha=.2) +
       geom_point(aes_string(shape="MODE"), alpha=.4, size=5) +
@@ -77,7 +76,7 @@ shinyServer(function(input, output, session) {
     withTags(div(p(b(paste0(fx, ":")), point[[fx]]),
                  p(b(paste0(fy, ":")), point[[fy]]),
                  p(b("MODE:"), point$MODE),
-                 p(b("DIVISION:"), point$DIVISION_ORIG),
+                 p(b("DIVISION:"), point$DIVISION),
                  p(b("SUPERCLASS:"), point$SUPERCLASS),
                  p(b("CLASS:"), point$CLASS),
                  p(b("ID:"), span(id, id="chunk_id"))))
