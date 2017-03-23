@@ -4,39 +4,45 @@ library(Cairo)   # For nicer ggplot2 output when deployed on Linux
 
 palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
+defaultIfEmptyString <- function(value, default) {
+  if (value == "") default else value
+}
+
 shinyServer(function(input, output, session) {
   data <- reactive({
     if (is.null(input$csv)) {
       csv <- "factors.csv"
-      name <- csv
+      # name <- csv
     } else {
       csv <- input$csv$datapath
       # name <- input$csv$name
     }
     
-    factors <- read.csv(csv)
-    fnames <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(factors), value=TRUE, invert=TRUE)
-    factors <- rename(factors, DIVISION_ORIG=DIVISION)
-    factors$DIVISION <- factor(paste(factors$MODE, factors$DIVISION_ORIG))
-    updateSelectInput(session, "fx", choices=fnames, selected=fnames[1])
-    updateSelectInput(session, "fy", choices=fnames, selected=fnames[2])
-    modes <- levels(factors$MODE)
+    df <- read.csv(csv)
+    factors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(df), value=TRUE, invert=TRUE)
+    df <- rename(df, DIVISION_ORIG=DIVISION)
+    df$DIVISION <- factor(paste(df$MODE, df$DIVISION_ORIG))
+    updateSelectInput(session, "fx", choices=factors, selected=factors[1])
+    updateSelectInput(session, "fy", choices=factors, selected=factors[2])
+    modes <- levels(df$MODE)
     updateCheckboxGroupInput(session, "mode", choices=modes, selected=modes, inline=TRUE)
-    divisions <- levels(factors$DIVISION_ORIG)
+    divisions <- levels(df$DIVISION_ORIG)
     updateCheckboxGroupInput(session, "division", choices=divisions, inline=TRUE)
 
-    list(factors=factors)
+    list(df=df, factors=factors, modes=modes, divisions=divisions)
   })
 
   ranges <- reactiveValues(x=NULL, y=NULL)
   
   output$mdaplot <- renderPlot({
-    fx <- input$fx
-    fy <- input$fy
-    factors <- data()$factors
-    filtered <- subset(factors, MODE %in% input$mode | DIVISION_ORIG %in% input$division)
+    data <- data()
+    df <- data$df
+    factors <- data$factors
+    fx <- defaultIfEmptyString(input$fx, factors[1])
+    fy <- defaultIfEmptyString(input$fy, factors[2])
+    filtered <- subset(df, MODE %in% input$mode | DIVISION_ORIG %in% input$division)
     ggplot(filtered, aes_string(fx, fy, color="DIVISION")) +
-      geom_point(aes_string(fx, fy), transform(factors, MODE=NULL), color="grey", alpha=.2) +
+      geom_point(aes_string(fx, fy), transform(df, MODE=NULL), color="grey", alpha=.2) +
       geom_point(aes_string(shape="MODE"), alpha=.4, size=5) +
       theme_bw() +
       scale_color_manual(values=palette, drop=FALSE) +
@@ -60,11 +66,13 @@ shinyServer(function(input, output, session) {
   })
   
   output$click_info <- renderPrint({
+    data <- data()
     # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
     # were a base graphics plot, we'd need those.
-    point <- nearPoints(data()$factors, input$mdaplot_click, addDist=TRUE)[1, ]
-    fx <- input$fx
-    fy <- input$fy
+    point <- nearPoints(data$df, input$mdaplot_click, addDist=TRUE)[1, ]
+    factors <- data$factors
+    fx <- defaultIfEmptyString(input$fx, factors[1])
+    fy <- defaultIfEmptyString(input$fy, factors[2])
     id <- point$X
     withTags(div(p(b(paste0(fx, ":")), point[[fx]]),
                  p(b(paste0(fy, ":")), point[[fy]]),
