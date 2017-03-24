@@ -10,7 +10,7 @@ defaultIfEmptyString <- function(value, default) {
 shinyServer(function(input, output, session) {
   data <- reactive({
     if (is.null(input$csv)) {
-      csv <- "factors.csv"
+      csv <- input$results
       # name <- csv
     } else {
       csv <- input$csv$datapath
