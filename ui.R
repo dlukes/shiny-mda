@@ -1,5 +1,5 @@
-results <- sort(list.files("results/fa", full.names=TRUE), decreasing=TRUE)
-names(results) <- tools::file_path_sans_ext(basename(results))
+fresults <- sort(list.files("results/factors", full.names=TRUE), decreasing=TRUE)
+names(fresults) <- tools::file_path_sans_ext(basename(fresults))
 
 shinyUI(fluidPage(
   titlePanel("Shiny Happy MDA"),
@@ -16,7 +16,7 @@ shinyUI(fluidPage(
                   "text/comma-separated-values"
                 )
       ),
-      selectInput("results", "Výsledky:", choices=results, selected=results[1]),
+      selectInput("results", "Výsledky:", choices=fresults, selected=fresults[1]),
       selectInput("fx", "Osa X:", choices=c()),
       selectInput("fy", "Osa Y:", choices=c()),
       checkboxGroupInput("mode", "Mode:", choices=c()),
