@@ -29,13 +29,24 @@ shinyUI(fluidPage(
     ),
 
     mainPanel(
-      plotOutput("mdaplot",
-                click="mdaplot_click",
-                dblclick="mdaplot_dblclick",
-                brush=brushOpts(
-                  id="mdaplot_brush",
-                  resetOnNew=TRUE
-                )
+      id="main-panel",
+      tabsetPanel(
+        tabPanel(
+          "Faktory",
+          plotOutput("fplot",
+                    click="fplot_click",
+                    dblclick="fplot_dblclick",
+                    brush=brushOpts(
+                      id="fplot_brush",
+                      resetOnNew=TRUE
+                    )
+          )
+        ),
+        tabPanel(
+          "Loadings",
+          plotOutput("lplot")
+        )
       )
     )
-)))
+  )
+))

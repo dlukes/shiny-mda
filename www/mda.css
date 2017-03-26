@@ -1,4 +1,12 @@
-#mdaplot {
+#main-panel {
+  top: -41px;
+}
+
+#fplot {
+  height: 90vh !important;
+}
+
+#lplot {
   height: 90vh !important;
 }
 

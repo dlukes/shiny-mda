@@ -1,4 +1,6 @@
 library(ggplot2)
+library(tidyr)
+library(dplyr)
 library(Cairo)   # For nicer ggplot2 output when deployed on Linux
 
 palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
@@ -17,31 +19,32 @@ shinyServer(function(input, output, session) {
       # name <- input$csv$name
     }
 
-    df <- read.csv(csv)
-    factors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(df), value=TRUE, invert=TRUE)
-    df$DIVISION <- factor(df$DIVISION, c("int", "nin", "mul", "uni", "fic", "nfc", "nmg", "pri"),
+    fdf <- read.csv(csv)
+    factors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(fdf), value=TRUE, invert=TRUE)
+    fdf$DIVISION <- factor(fdf$DIVISION, c("int", "nin", "mul", "uni", "fic", "nfc", "nmg", "pri"),
                           c("spo int", "spo nin", "web mul", "web uni", "wri fic", "wri nfc", "wri nmg", "wri pri"))
+
     updateSelectInput(session, "fx", choices=factors, selected=factors[1])
     updateSelectInput(session, "fy", choices=factors, selected=factors[2])
-    modes <- levels(df$MODE)
+    modes <- levels(fdf$MODE)
     updateCheckboxGroupInput(session, "mode", choices=modes, selected=modes, inline=TRUE)
-    divisions <- levels(df$DIVISION)
+    divisions <- levels(fdf$DIVISION)
     updateCheckboxGroupInput(session, "division", choices=divisions, inline=TRUE)
 
-    list(df=df, factors=factors, modes=modes, divisions=divisions)
+    list(fdf=fdf, factors=factors, modes=modes, divisions=divisions)
   })
 
   ranges <- reactiveValues(x=NULL, y=NULL)
 
-  output$mdaplot <- renderPlot({
+  output$fplot <- renderPlot({
     data <- data()
-    df <- data$df
+    fdf <- data$fdf
     factors <- data$factors
     fx <- defaultIfEmptyString(input$fx, factors[1])
     fy <- defaultIfEmptyString(input$fy, factors[2])
-    filtered <- subset(df, MODE %in% input$mode | DIVISION %in% input$division)
+    filtered <- subset(fdf, MODE %in% input$mode | DIVISION %in% input$division)
     ggplot(filtered, aes_string(fx, fy, color="DIVISION")) +
-      geom_point(aes_string(fx, fy), transform(df, MODE=NULL), color="grey", alpha=.2) +
+      geom_point(aes_string(fx, fy), transform(fdf, MODE=NULL), color="grey", alpha=.2) +
       geom_point(aes_string(shape="MODE"), alpha=.4, size=5) +
       theme_bw() +
       scale_color_manual(values=palette, drop=FALSE) +
@@ -52,8 +55,8 @@ shinyServer(function(input, output, session) {
 
   # When a double-click happens, check if there's a brush on the plot.
   # If so, zoom to the brush bounds; if not, reset the zoom.
-  observeEvent(input$mdaplot_dblclick, {
-    brush <- input$mdaplot_brush
+  observeEvent(input$fplot_dblclick, {
+    brush <- input$fplot_brush
     if (!is.null(brush)) {
       ranges$x <- c(brush$xmin, brush$xmax)
       ranges$y <- c(brush$ymin, brush$ymax)
@@ -68,7 +71,7 @@ shinyServer(function(input, output, session) {
     data <- data()
     # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
     # were a base graphics plot, we'd need those.
-    point <- nearPoints(data$df, input$mdaplot_click, addDist=TRUE)[1, ]
+    point <- nearPoints(data$fdf, input$fplot_click, addDist=TRUE)[1, ]
     factors <- data$factors
     fx <- defaultIfEmptyString(input$fx, factors[1])
     fy <- defaultIfEmptyString(input$fy, factors[2])
@@ -82,6 +85,29 @@ shinyServer(function(input, output, session) {
                  p(b("ID:"), span(id, id="chunk_id"))))
   })
 
-  output$fx <- reactive(input$fx)
-  output$fy <- reactive(input$fy)
+  output$lplot <- renderPlot({
+    if (!is.null(input$csv)) {
+      stop("Loadings jsou k dispozici pouze u přednahraných dat.")
+    }
+
+    ldf <- read.csv(file.path("results", "loadings", basename(input$results)))
+    ldf <- read.csv("results/loadings/2017-03-14.csv")
+    ldf_tmp <- select_if(ldf, is.numeric)
+    ldf_tmp$max <- apply(ldf_tmp, 1, function(x) max(abs(x)))
+    ldf_tmp$Feature <- ldf$X
+    ldf <- filter(ldf_tmp, max > 0.5) %>%
+      select(-max) %>%
+      gather("Factor", "Loading", -Feature)
+    rm(load.tmp)
+
+    ggplot(ldf, aes(Feature, abs(Loading), fill=Loading)) +
+      facet_wrap(~Factor, nrow=1) +
+      geom_bar(stat="identity") +
+      coord_flip() +
+      scale_fill_gradient2(name="Loading",
+                           high="blue", mid="white", low="red",
+                           midpoint=0, guide="colourbar") +
+      ylab("Loading Strength") +
+      theme_bw(base_size=8)
+  })
 })
