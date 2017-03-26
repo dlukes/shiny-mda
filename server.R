@@ -91,14 +91,6 @@ shinyServer(function(input, output, session) {
     }
 
     ldf <- read.csv(file.path("results", "loadings", basename(input$results)))
-    ldf_tmp <- select_if(ldf, is.numeric)
-    ldf_tmp$max <- apply(ldf_tmp, 1, function(x) max(abs(x)))
-    ldf_tmp$Feature <- ldf$X
-    ldf <- filter(ldf_tmp, max > 0.5) %>%
-      select(-max) %>%
-      gather("Factor", "Loading", -Feature)
-    rm(load.tmp)
-
     ggplot(ldf, aes(Feature, abs(Loading), fill=Loading)) +
       facet_wrap(~Factor, nrow=1) +
       geom_bar(stat="identity") +
