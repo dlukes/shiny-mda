@@ -91,7 +91,6 @@ shinyServer(function(input, output, session) {
     }
 
     ldf <- read.csv(file.path("results", "loadings", basename(input$results)))
-    ldf <- read.csv("results/loadings/2017-03-14.csv")
     ldf_tmp <- select_if(ldf, is.numeric)
     ldf_tmp$max <- apply(ldf_tmp, 1, function(x) max(abs(x)))
     ldf_tmp$Feature <- ldf$X
