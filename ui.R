@@ -23,7 +23,7 @@ shinyUI(fluidPage(
       checkboxGroupInput("division", "Division:", choices=c()),
       h4("Vybraný bod:"),
       htmlOutput("click_info"),
-      textInput("cql", "CQL:", value='[lemma=""]'),
+      textInput("cql", "CQL:", value='[lemma=".*"]'),
       actionButton("search", "Hledat", onclick="kontextSearch()"),
       tags$script(src="kontextSearch.js")
     ),
