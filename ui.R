@@ -1,4 +1,4 @@
-fresults <- sort(list.files("results/factors", full.names=TRUE), decreasing=TRUE)
+fresults <- sort(list.files("results/factors", pattern="\\.csv$", full.names=TRUE), decreasing=TRUE)
 names(fresults) <- tools::file_path_sans_ext(basename(fresults))
 
 shinyUI(fluidPage(
