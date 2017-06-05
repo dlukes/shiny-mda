@@ -3,6 +3,8 @@ library(tidyr)
 library(dplyr)
 library(Cairo)   # For nicer ggplot2 output when deployed on Linux
 
+source("dim_graph.R")
+
 palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 defaultIfEmptyString <- function(value, default) {
@@ -22,7 +24,7 @@ shinyServer(function(input, output, session) {
     fdf <- read.csv(csv)
     factors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(fdf), value=TRUE, invert=TRUE)
     fdf$DIVISION <- factor(fdf$DIVISION, c("int", "nin", "mul", "uni", "fic", "nfc", "nmg", "pri"),
-                          c("spo int", "spo nin", "web mul", "web uni", "wri fic", "wri nfc", "wri nmg", "wri pri"))
+                          c("spo-int", "spo-nin", "web-mul", "web-uni", "wri-fic", "wri-nfc", "wri-nmg", "wri-pri"))
 
     updateSelectInput(session, "fx", choices=factors, selected=factors[1])
     updateSelectInput(session, "fy", choices=factors, selected=factors[2])
@@ -100,5 +102,14 @@ shinyServer(function(input, output, session) {
                            midpoint=0, guide="colourbar") +
       ylab("Loading Strength") +
       theme_bw(base_size=8)
+  })
+
+  output$d1plot <- renderPlot({
+    data <- data()
+    DimDraw(data$fdf, factor.name=input$fx, low.perc=input$range[1], up.perc=input$range[2])
+  })
+  output$d2plot <- renderPlot({
+    data <- data()
+    DimDraw(data$fdf, factor.name=input$fy, low.perc=input$range[1], up.perc=input$range[2])
   })
 })

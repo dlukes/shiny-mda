@@ -45,6 +45,16 @@ shinyUI(fluidPage(
         tabPanel(
           "Loadings",
           plotOutput("lplot")
+        ),
+        tabPanel(
+          "BiberPlot™",
+          br(),
+          div(
+            id="percentile-range-wrapper",
+            sliderInput("range", "Percentily:", min=0, max=1, value=c(.3, .7), width="100%")
+          ),
+          plotOutput("d1plot"),
+          plotOutput("d2plot")
         )
       )
     )
