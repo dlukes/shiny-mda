@@ -32,7 +32,7 @@ shinyUI(fluidPage(
       id="main-panel",
       tabsetPanel(
         tabPanel(
-          "Factors",
+          "Factors 2-dim",
           plotOutput("fplot",
                     click="fplot_click",
                     dblclick="fplot_dblclick",
@@ -41,6 +41,16 @@ shinyUI(fluidPage(
                       resetOnNew=TRUE
                     )
           )
+        ),
+        tabPanel(
+          "Factors Boxplots",
+          br(),
+          div(
+            class="outer-range-wrapper",
+            sliderInput("perc", "Percentiles:", min=0, max=1, step=.05, value=c(.3, .7), width="100%")
+          ),
+          plotOutput("d1plot"),
+          plotOutput("d2plot")
         ),
         tabPanel(
           "Loadings Plot",
@@ -58,16 +68,6 @@ shinyUI(fluidPage(
             column(6, selectInput("sortfactor", "Sort by:", choices=c()))
           ),
           tableOutput("ltable")
-        ),
-        tabPanel(
-          "BiberPlot™",
-          br(),
-          div(
-            class="outer-range-wrapper",
-            sliderInput("perc", "Percentiles:", min=0, max=1, step=.05, value=c(.3, .7), width="100%")
-          ),
-          plotOutput("d1plot"),
-          plotOutput("d2plot")
         )
       )
     )
