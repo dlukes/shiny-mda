@@ -10,21 +10,21 @@ shinyUI(fluidPage(
       # bookmarking probably requires some more setup, or maybe it fails because of the initial error
       # in the app...?
       # bookmarkButton(),
-      fileInput("csv", "Nahrát vlastní faktory:",
+      fileInput("csv", "Upload your own data:",
                 accept=c(
                   "text/csv",
                   "text/comma-separated-values"
                 )
       ),
-      selectInput("results", "Výsledky:", choices=fresults, selected=fresults[1]),
-      selectInput("fx", "Osa X:", choices=c()),
-      selectInput("fy", "Osa Y:", choices=c()),
+      selectInput("results", "Results:", choices=fresults, selected=fresults[1]),
+      selectInput("fx", "X axis:", choices=c()),
+      selectInput("fy", "Y axis:", choices=c()),
       checkboxGroupInput("mode", "Mode:", choices=c()),
       checkboxGroupInput("division", "Division:", choices=c()),
-      h4("Vybraný bod:"),
+      h4("Selected chunk:"),
       htmlOutput("click_info"),
       textInput("cql", "CQL:", value='[lemma=".*"]'),
-      actionButton("search", "Hledat", onclick="kontextSearch()"),
+      actionButton("search", "Search", onclick="kontextSearch()"),
       tags$script(src="kontextSearch.js")
     ),
 
@@ -32,7 +32,7 @@ shinyUI(fluidPage(
       id="main-panel",
       tabsetPanel(
         tabPanel(
-          "Faktory",
+          "Factors",
           plotOutput("fplot",
                     click="fplot_click",
                     dblclick="fplot_dblclick",
@@ -51,7 +51,7 @@ shinyUI(fluidPage(
           br(),
           div(
             id="percentile-range-wrapper",
-            sliderInput("range", "Percentily:", min=0, max=1, value=c(.3, .7), width="100%")
+            sliderInput("range", "Percentiles:", min=0, max=1, value=c(.3, .7), width="100%")
           ),
           plotOutput("d1plot"),
           plotOutput("d2plot")

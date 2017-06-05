@@ -89,7 +89,7 @@ shinyServer(function(input, output, session) {
 
   output$lplot <- renderPlot({
     if (!is.null(input$csv)) {
-      stop("Loadings jsou k dispozici pouze u přednahraných dat.")
+      stop("Loadings are available only with preloaded data.")
     }
 
     ldf <- read.csv(file.path("results", "loadings", basename(input$results)))

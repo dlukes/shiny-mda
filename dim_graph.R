@@ -51,7 +51,7 @@ addDesc <- function(cat) {
   if (nrow(desc[ desc$CAT == "spo-int--eli", ]) > 0) { desc[ desc$CAT == "spo-int--eli", ]$description = "Elicited speech" }
   if (nrow(desc[ desc$CAT == "spo-int--inf", ]) > 0) { desc[ desc$CAT == "spo-int--inf", ]$description = "Private conversation" }
   if (nrow(desc[ desc$CAT == "spo-nin--wbs", ]) > 0) { desc[ desc$CAT == "spo-nin--wbs", ]$description = "Written-to-be-spoken" }
-  if (nrow(desc[ desc$CAT == "web-mul--dis", ]) > 0) { desc[ desc$CAT == "web-mul--dis", ]$description = "Net discussions" }
+  if (nrow(desc[ desc$CAT == "web-mul--dis", ]) > 0) { desc[ desc$CAT == "web-mul--dis", ]$description = "Web discussions" }
   if (nrow(desc[ desc$CAT == "web-mul--fcb", ]) > 0) { desc[ desc$CAT == "web-mul--fcb", ]$description = "Facebook posts" }
   if (nrow(desc[ desc$CAT == "web-mul--for", ]) > 0) { desc[ desc$CAT == "web-mul--for", ]$description = "Web forums" }
   if (nrow(desc[ desc$CAT == "web-uni--blo", ]) > 0) { desc[ desc$CAT == "web-uni--blo", ]$description = "Blogs" }
@@ -79,7 +79,7 @@ addDesc <- function(cat) {
   if (nrow(desc[ desc$CAT == "wri-nfc-sci-hum", ]) > 0) { desc[ desc$CAT == "wri-nfc-sci-hum", ]$description = "SCI: Humanities" }
   if (nrow(desc[ desc$CAT == "wri-nfc-sci-nat", ]) > 0) { desc[ desc$CAT == "wri-nfc-sci-nat", ]$description = "SCI: Natural sc." }
   if (nrow(desc[ desc$CAT == "wri-nfc-sci-ssc", ]) > 0) { desc[ desc$CAT == "wri-nfc-sci-ssc", ]$description = "SCI: Social sc." }
-  if (nrow(desc[ desc$CAT == "wri-nmg-lei-hou", ]) > 0) { desc[ desc$CAT == "wri-nmg-lei-hou", ]$description = "Hobbies mag." }
+  if (nrow(desc[ desc$CAT == "wri-nmg-lei-hou", ]) > 0) { desc[ desc$CAT == "wri-nmg-lei-hou", ]$description = "Hobby mag." }
   if (nrow(desc[ desc$CAT == "wri-nmg-lei-int", ]) > 0) { desc[ desc$CAT == "wri-nmg-lei-int", ]$description = "Interest. facts mag." }
   if (nrow(desc[ desc$CAT == "wri-nmg-lei-lif", ]) > 0) { desc[ desc$CAT == "wri-nmg-lei-lif", ]$description = "Lifestyle mag." }
   if (nrow(desc[ desc$CAT == "wri-nmg-lei-mix", ]) > 0) { desc[ desc$CAT == "wri-nmg-lei-mix", ]$description = "Misc. mag." }
@@ -89,7 +89,7 @@ addDesc <- function(cat) {
   if (nrow(desc[ desc$CAT == "wri-nmg-new-cul", ]) > 0) { desc[ desc$CAT == "wri-nmg-new-cul", ]$description = "Culture news" }
   if (nrow(desc[ desc$CAT == "wri-nmg-new-eco", ]) > 0) { desc[ desc$CAT == "wri-nmg-new-eco", ]$description = "Economic news" }
   if (nrow(desc[ desc$CAT == "wri-nmg-new-fre", ]) > 0) { desc[ desc$CAT == "wri-nmg-new-fre", ]$description = "Leisure time art." }
-  if (nrow(desc[ desc$CAT == "wri-nmg-new-pol", ]) > 0) { desc[ desc$CAT == "wri-nmg-new-pol", ]$description = "Politic news" }
+  if (nrow(desc[ desc$CAT == "wri-nmg-new-pol", ]) > 0) { desc[ desc$CAT == "wri-nmg-new-pol", ]$description = "Politics news" }
   if (nrow(desc[ desc$CAT == "wri-nmg-new-rep", ]) > 0) { desc[ desc$CAT == "wri-nmg-new-rep", ]$description = "News" }
   if (nrow(desc[ desc$CAT == "wri-pri--cor", ]) > 0) { desc[ desc$CAT == "wri-pri--cor", ]$description = "Letters" }
   return(desc$description)
