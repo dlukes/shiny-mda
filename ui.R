@@ -25,7 +25,8 @@ shinyUI(fluidPage(
       htmlOutput("click_info"),
       textInput("cql", "CQL:", value='[lemma=".*"]'),
       actionButton("search", "Search", onclick="kontextSearch()"),
-      tags$script(src="kontextSearch.js")
+      tags$script(src="kontextSearch.js"),
+      tags$script(src="loadingsTable.js")
     ),
 
     mainPanel(

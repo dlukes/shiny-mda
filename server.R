@@ -135,7 +135,7 @@ shinyServer(function(input, output, session) {
     align[c(1, 2)] <- c("r", "l")
     align <- paste0(align, collapse="")
   }
-  output$ltable <- renderTable(ltable(), align=align, spacing="xs", na="")
+  output$ltable <- renderTable(ltable(), align=align, spacing="xs", na="", hover=TRUE)
 
   ###################################################################################################
   # BIBER PLOTS
