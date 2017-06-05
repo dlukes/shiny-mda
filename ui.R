@@ -43,15 +43,28 @@ shinyUI(fluidPage(
           )
         ),
         tabPanel(
-          "Loadings",
+          "Loadings Plot",
           plotOutput("lplot")
+        ),
+        tabPanel(
+          "Loadings Table",
+          br(),
+          div(
+            class="outer-range-wrapper",
+            sliderInput("thresh", "Thresholds:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
+          ),
+          fluidRow(
+            column(6, checkboxGroupInput("showfactors", "Show factors:", choices=c(), width="100%")),
+            column(6, selectInput("sortfactor", "Sort by:", choices=c()))
+          ),
+          tableOutput("ltable")
         ),
         tabPanel(
           "BiberPlot™",
           br(),
           div(
-            id="percentile-range-wrapper",
-            sliderInput("range", "Percentiles:", min=0, max=1, value=c(.3, .7), width="100%")
+            class="outer-range-wrapper",
+            sliderInput("perc", "Percentiles:", min=0, max=1, step=.05, value=c(.3, .7), width="100%")
           ),
           plotOutput("d1plot"),
           plotOutput("d2plot")

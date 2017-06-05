@@ -1,0 +1,159 @@
+Feature,Description,Category,Subcategory
+PROTV,protetické v,fonologie,konsonanty
+FEI,úžení é v í v kořeni,fonologie,vokály
+FEIK,úžení é v í v koncovce,fonologie,vokály
+FYEJ,přehláska ý > ej v kořeni,fonologie,vokály
+FYEJK,přehláska ý > ej v koncovce,fonologie,vokály
+FUOU,"přehláska ú > ou, příznakové ou (iniciální)",fonologie,vokály
+FOUU,"přehláska ú > ou, příznakové ú (mediální a finální)",fonologie,vokály
+WL,průměrná délka slova,fonologie,
+EUF,eufonie,fonologie,
+ZKR,zkrácené formy,fonologie,verba
+CLIT,příklonky,fonologie,
+AA,adjektiva,lexikon,adjektiva
+PAJ,sémanticky vyprázdněná adjektiva,lexikon,adjektiva
+DEMD,ukazovací adverbia,lexikon,adverbia
+DB,adverbia,lexikon,adverbia
+DT,určení času,lexikon,adverbia
+DP,určení místa,lexikon,adverbia
+DI,neurčitá adverbia,lexikon,adverbia
+RST,restriktory,lexikon,adverbia
+PAV,sémanticky vyprázdněná adverbia,lexikon,adverbia
+INT,citoslovce,lexikon,citoslovce
+FNW,synsémantika,lexikon,funkce/význam
+POE,poetismy,lexikon,funkce/význam
+VUL,tabuová slova,lexikon,funkce/význam
+TIME,časové výrazy,lexikon,funkce/význam
+CONJI,inventář spojek,lexikon,konjunkce
+MOD,modalita,lexikon,modalita
+NUM,numerale,lexikon,numerale
+PREI,inventář předložek,lexikon,prepozice
+DEM,"ukazovací zájmena (bez ""to"")",lexikon,pronomina
+IND,neurčitá zájmena,lexikon,pronomina
+P1P,zájmena pro 1. os.,lexikon,pronomina
+P2P,zájmena pro 2. os.,lexikon,pronomina
+P3P,zájmena pro 3. os.,lexikon,pronomina
+PP,pronomina,lexikon,pronomina
+PPI,inventář zájmen,lexikon,pronomina
+POSP,přivlastňovací zájmena,lexikon,pronomina
+NN,substantiva,lexikon,substantiva
+PSB,sémanticky vyprázdněná substantiva,lexikon,substantiva
+VTS,slovesa myšlení,lexikon,verba
+VD,slovesa mluvení,lexikon,verba
+VB,slovesa,lexikon,verba
+EXI,"existenciální ""být""",lexikon,verba
+PVB,sémanticky vyprázdněná slovesa,lexikon,verba
+XXX,míra lexikální/tvaroslovné inovace,lexikon,
+ARCH,knižní a zastaralá synsémantika a vybraná adv.,lexikon,
+LAT,latinské citátové výrazy,lexikon,
+GENL,genderové markery - lexikon,lexikon,substantiva
+ADN,jmenné tvary adjektiv,morfologie,adjektiva
+AKK,akuzativ,morfologie,nouns
+DAT,dativ,morfologie,nouns
+GEN,genitiv,morfologie,nouns
+INS,instrumentál,morfologie,nouns
+LOK,lokál,morfologie,nouns
+NOM,nominativ,morfologie,nouns
+CAS,předložkové pády obecně,morfologie,"nouns, pronouns"
+AMA,koncovka -ma,morfologie,nouns
+IEK,morfologická konkurence koncovek -é vs. -i,morfologie,substantiva
+GENF,feminina,morfologie,substantiva
+GENI,maskulina inanim.,morfologie,substantiva
+GENM,maskulina anim.,morfologie,substantiva
+GENN,neutra,morfologie,substantiva
+VOC,vokativ,morfologie,substantiva
+SGPL,číslo substantiv,morfologie,substantiva
+VPE1,1. slovesná osoba,morfologie,verba
+VPE2,2. slovesná osoba,morfologie,verba
+ICI,infinitiv na -ci,morfologie,verba
+VIM,imperativ,morfologie,verba
+VIN,indikativ,morfologie,verba
+VTE3,slovesný čas - bud.,morfologie,verba
+VTE1,slovesný čas - min,morfologie,verba
+VVO,slovesný rod,morfologie,verba
+TRGR,přechodníky,morfologie,verba
+VTE2,slovesný čas - přít.,morfologie,verba
+NEG1,negace větná,morfologie,verba
+VF,verba finita,morfologie,verba
+BYTS,"pomocné ""být"" ve formě -s",morfologie,verba
+VAS,slovesný vid,morfologie,
+VCO,kondicionál,morfologie,verba
+NEG2,negace lexikální,morfologie,
+NEG4,negace členská,morfologie,
+DROP,pronoun non-dropping,morfologie,zájmena
+GENG,genderové markery - gramatika,morfologie,verba
+KONT,kontaktové výrazy,pragmatika,funkce/význam
+VYPW,výplňková slova,pragmatika,funkce/význam
+EXP,"expresivní částice (ostatní - zbytek z COH2, AMP a DOWN)",pragmatika,partikule
+AMP,částice zesilující význam (amplifiers/boosters),pragmatika,partikule
+DOWN,částice oslabující význam (downtoners/hedges),pragmatika,partikule
+IT,"polyfunkční ""to""",pragmatika,pronomina
+PROPT,toponyma,pragmatika,substantiva
+PROPA,antroponyma,pragmatika,substantiva
+PROP,propria,pragmatika,substantiva
+EXC,vykřičník,pragmatika,symboly
+GRAAA,analytické stupňování,slovotvorba,adjektiva
+ASIM,adjektiva podobnosti,slovotvorba,adjektiva
+POS,přivlastňovací adjektiva,slovotvorba,adjektiva
+AAV,verbální adjektiva,slovotvorba,adjektiva
+GRAD,stupňování,slovotvorba,adjektiva
+GRADA,analytické stupňování,slovotvorba,adverbia
+GRADD,stupňování,slovotvorba,adverbia
+DEMI,deminutiva,slovotvorba,substantiva
+NNV,verbální substantiva,slovotvorba,substantiva
+ABS,abstrakta,slovotvorba,substantiva
+AUG,augmentativa,slovotvorba,substantiva
+GENA,genderové markery - derivace,slovotvorba,adjektiva
+ATA1,přívlastky shodné anteponované,syntax,adjektiva
+ATA21,přívlastky shodné postponované nerozvité,syntax,adjektiva
+ATA22,adjektivní přívlastky shodné postponované rozvité,syntax,adjektiva
+CLUAC,klastry pádů adjektiv,syntax,adjektiva
+CLUA,klastry adjektiv,syntax,adjektiva
+CLUAD,klastry adverbií,syntax,adverbia
+CPD,věty s interog. a vztaž. adv.,syntax,adverbia
+CONJ,konjunkce,syntax,konjunkce
+COH1,vícečlenné konektory typu jednak - jednak,syntax,konjunkce
+COOR,koordinace,syntax,konjunkce
+PRE,předložky,syntax,prepozice
+PRE2,sekundární předložky,syntax,prepozice
+PRE3,předložky se špatným pádem,syntax,prepozice
+REL2,vztažné věty typu který,syntax,pronomina
+REL3,vztažné věty typu co,syntax,pronomina
+REL1,vztažné věty typu jenž,syntax,pronomina
+SER,větná relativa,syntax,subordinace
+ACM,komplementace adjektiva,syntax,subordinace
+VCM,komplementace slovesa,syntax,subordinace
+CLUN,klastry substantiv,syntax,substantiva
+CLUNC,klustry pádů substantiv,syntax,substantiva
+STA3,subst. přívlastky neshodné anteponované,syntax,substantiva
+STA4,subst. přívlastky neshodné postponované,syntax,substantiva
+PA,jmenný přísudek adj.,syntax,verba
+PN,jmenný přísudek subst.,syntax,verba
+INFK,infinitiv kondenzační,syntax,verba
+CIR,okolnostní věty,syntax,věta
+CIR3,VV přípustkové a další adverzativní,syntax,věta
+CIR2,VV podmínkové,syntax,věta
+CIR1,VV příčinné,syntax,věta
+CIR4,VV okolnostní další,syntax,věta
+SL,průměrná délka věty v tokenech,syntax,věta
+NEG3,negace vícenásobná,syntax,
+SVO,bezpříznakový slovosled,syntax,
+CORR,korelativa,syntax,
+DIG,číslice,technikálie,symboly
+SYM,symboly,technikálie,symboly
+ZKRP,zkratky v psaném jazyce,technikálie,
+URL,odkazy,technikálie,
+LCASE,lowercase,technikálie,velikost písma
+TCASE,titlecase,technikálie,velikost písma
+UCASE,uppercase,technikálie,velikost písma
+MCASE,mixed case,technikálie,velikost písma
+COH2,částice členící text,text,partikule
+QUE2,"otázky ""všechny""",text,věta
+QUE1,"otázky ""doplňovací""",text,věta
+PHRA,frazeologie,text,
+REP,opakování slov,text,
+LR,lexikální bohatost,text,
+TC,tematická koncentrace,text,
+BIG,bigramy,text,
+UNG,unigramy,text,
+NGR,ngramy,pragmatika,text

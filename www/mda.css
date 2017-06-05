@@ -16,13 +16,13 @@
 
 /* range slider input: swap CSS for .irs-line and .irs-bar to fill extremities instead of middle
    portion */
-#percentile-range-wrapper .irs-line {
+.outer-range-wrapper .irs-line {
   border-top: 1px solid #428bca;
   border-bottom: 1px solid #428bca;
   background: #428bca;
 }
 
-#percentile-range-wrapper .irs-bar {
+.outer-range-wrapper .irs-bar {
   background: linear-gradient(to bottom, #ddd -50%, #fff 150%);
   border: 1px solid #ccc;
   -moz-border-radius: 16px;

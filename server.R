@@ -6,12 +6,17 @@ library(Cairo)   # For nicer ggplot2 output when deployed on Linux
 source("dim_graph.R")
 
 palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+feat2desc <- read.csv("./conf/feat2desc.csv")
 
 defaultIfEmptyString <- function(value, default) {
   if (value == "") default else value
 }
 
 shinyServer(function(input, output, session) {
+
+  ###################################################################################################
+  # TWO-DIMENSIONAL PLOT
+
   data <- reactive({
     if (is.null(input$csv)) {
       csv <- input$results
@@ -87,13 +92,23 @@ shinyServer(function(input, output, session) {
                  p(b("ID:"), span(id, id="chunk_id"))))
   })
 
-  output$lplot <- renderPlot({
+  ###################################################################################################
+  # LOADINGS
+
+  ldata <- reactive({
     if (!is.null(input$csv)) {
       stop("Loadings are available only with preloaded data.")
     }
+    ldf <- read.csv(file.path("results", "loadings", basename(input$results))) %>%
+      select(-X)
+    factors <- levels(ldf$Factor)
+    updateCheckboxGroupInput(session, "showfactors", choices=factors, selected=factors, inline=TRUE)
+    updateSelectInput(session, "sortfactor", choices=c("Feature", factors))
+    ldf
+  })
 
-    ldf <- read.csv(file.path("results", "loadings", basename(input$results)))
-    ggplot(ldf, aes(Feature, abs(Loading), fill=Loading)) +
+  output$lplot <- renderPlot({
+    ggplot(ldata(), aes(Feature, abs(Loading), fill=Loading)) +
       facet_wrap(~Factor, nrow=1) +
       geom_bar(stat="identity") +
       coord_flip() +
@@ -104,12 +119,33 @@ shinyServer(function(input, output, session) {
       theme_bw(base_size=8)
   })
 
+  ltable <- reactive({
+    thresh <- input$thresh
+    sortfactor <- input$sortfactor
+    if (sortfactor != "Feature") sortfactor <- paste0("desc(", sortfactor, ")")
+    filter(ldata(), (Loading < thresh[1] | Loading > thresh[2]) & Factor %in% input$showfactors) %>%
+      spread(Factor, Loading) %>%
+      inner_join(feat2desc, .) %>%
+      arrange_(sortfactor)
+  })
+  # NOTE: if a reactive function parameter needs to use a reactive value, wrap it in a function,
+  # it will be evaluated in an active reactive context
+  align <- function() {
+    align <- rep("?", ncol(ltable()))
+    align[c(1, 2)] <- c("r", "l")
+    align <- paste0(align, collapse="")
+  }
+  output$ltable <- renderTable(ltable(), align=align, spacing="xs", na="")
+
+  ###################################################################################################
+  # BIBER PLOTS
+
   output$d1plot <- renderPlot({
     data <- data()
-    DimDraw(data$fdf, factor.name=input$fx, low.perc=input$range[1], up.perc=input$range[2])
+    DimDraw(data$fdf, factor.name=input$fx, low.perc=input$perc[1], up.perc=input$perc[2])
   })
   output$d2plot <- renderPlot({
     data <- data()
-    DimDraw(data$fdf, factor.name=input$fy, low.perc=input$range[1], up.perc=input$range[2])
+    DimDraw(data$fdf, factor.name=input$fy, low.perc=input$perc[1], up.perc=input$perc[2])
   })
 })
