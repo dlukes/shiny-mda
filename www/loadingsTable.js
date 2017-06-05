@@ -10,8 +10,9 @@
   ];
 
   function colorize() {
-    var value = parseFloat(this.innerHTML);
-    if (!isNaN(value)) {
+    var value = this.innerHTML.trim();
+    if (/^[\d\.\-]+$/.test(value)) {
+      value = parseFloat(value);
       var round = value < 0 ? Math.floor : Math.ceil;
       var colorIdx = round((value + 1) / 2 * 20);
       this.style.background = palette[colorIdx];
