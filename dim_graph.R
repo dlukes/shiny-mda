@@ -6,6 +6,11 @@ library(reshape2)
 library(ggplot2)
 library(pals)
 
+cat2desc_df <- read.csv("./conf/cat2desc.csv")
+cat2desc <- as.character(cat2desc_df$desc)
+names(cat2desc) <- cat2desc_df$cat
+rm(cat2desc_df)
+
 DimDraw <- function(data, factor.name = "GLS1", low.perc = 0.3, up.perc = 0.7, col.palette = NULL) {
   data$CAT = paste(data$DIVISION, data$SUPERCLASS, data$CLASS, sep="-")
   data$Desc = addDesc(data$CAT)
@@ -45,52 +50,5 @@ DimDraw <- function(data, factor.name = "GLS1", low.perc = 0.3, up.perc = 0.7, c
 }
 
 addDesc <- function(cat) {
-  desc = data.frame(CAT = cat, description = rep("-", length(cat)))
-  desc$description = as.character(desc$description)
-  if (nrow(desc[ desc$CAT == "spo-int--bru", ]) > 0) { desc[ desc$CAT == "spo-int--bru", ]$description = "Broadcast discussion" }
-  if (nrow(desc[ desc$CAT == "spo-int--eli", ]) > 0) { desc[ desc$CAT == "spo-int--eli", ]$description = "Elicited speech" }
-  if (nrow(desc[ desc$CAT == "spo-int--inf", ]) > 0) { desc[ desc$CAT == "spo-int--inf", ]$description = "Private conversation" }
-  if (nrow(desc[ desc$CAT == "spo-nin--wbs", ]) > 0) { desc[ desc$CAT == "spo-nin--wbs", ]$description = "Written-to-be-spoken" }
-  if (nrow(desc[ desc$CAT == "web-mul--dis", ]) > 0) { desc[ desc$CAT == "web-mul--dis", ]$description = "Web discussions" }
-  if (nrow(desc[ desc$CAT == "web-mul--fcb", ]) > 0) { desc[ desc$CAT == "web-mul--fcb", ]$description = "Facebook posts" }
-  if (nrow(desc[ desc$CAT == "web-mul--for", ]) > 0) { desc[ desc$CAT == "web-mul--for", ]$description = "Web forums" }
-  if (nrow(desc[ desc$CAT == "web-uni--blo", ]) > 0) { desc[ desc$CAT == "web-uni--blo", ]$description = "Blogs" }
-  if (nrow(desc[ desc$CAT == "web-uni--wik", ]) > 0) { desc[ desc$CAT == "web-uni--wik", ]$description = "Wikipedia" }
-  if (nrow(desc[ desc$CAT == "wri-fic--col", ]) > 0) { desc[ desc$CAT == "wri-fic--col", ]$description = "Short stories" }
-  if (nrow(desc[ desc$CAT == "wri-fic-nov-crm", ]) > 0) { desc[ desc$CAT == "wri-fic-nov-crm", ]$description = "Crime novels" }
-  if (nrow(desc[ desc$CAT == "wri-fic-nov-fan", ]) > 0) { desc[ desc$CAT == "wri-fic-nov-fan", ]$description = "Fantasy novels" }
-  if (nrow(desc[ desc$CAT == "wri-fic-nov-gen", ]) > 0) { desc[ desc$CAT == "wri-fic-nov-gen", ]$description = "General fiction" }
-  if (nrow(desc[ desc$CAT == "wri-fic-nov-lov", ]) > 0) { desc[ desc$CAT == "wri-fic-nov-lov", ]$description = "Romance novels" }
-  if (nrow(desc[ desc$CAT == "wri-fic-nov-scf", ]) > 0) { desc[ desc$CAT == "wri-fic-nov-scf", ]$description = "Sci-fi novels" }
-  if (nrow(desc[ desc$CAT == "wri-fic--scr", ]) > 0) { desc[ desc$CAT == "wri-fic--scr", ]$description = "Screenplays" }
-  if (nrow(desc[ desc$CAT == "wri-fic--ver", ]) > 0) { desc[ desc$CAT == "wri-fic--ver", ]$description = "Poetry, songs" }
-  if (nrow(desc[ desc$CAT == "wri-nfc--adm", ]) > 0) { desc[ desc$CAT == "wri-nfc--adm", ]$description = "Administrative texts" }
-  if (nrow(desc[ desc$CAT == "wri-nfc--enc", ]) > 0) { desc[ desc$CAT == "wri-nfc--enc", ]$description = "Encyclopedias" }
-  if (nrow(desc[ desc$CAT == "wri-nfc--mem", ]) > 0) { desc[ desc$CAT == "wri-nfc--mem", ]$description = "Memoirs" }
-  if (nrow(desc[ desc$CAT == "wri-nfc-pop-fts", ]) > 0) { desc[ desc$CAT == "wri-nfc-pop-fts", ]$description = "POP: Tech. sc." }
-  if (nrow(desc[ desc$CAT == "wri-nfc-pop-hum", ]) > 0) { desc[ desc$CAT == "wri-nfc-pop-hum", ]$description = "POP: Humanities" }
-  if (nrow(desc[ desc$CAT == "wri-nfc-pop-nat", ]) > 0) { desc[ desc$CAT == "wri-nfc-pop-nat", ]$description = "POP: Natural sc." }
-  if (nrow(desc[ desc$CAT == "wri-nfc-pop-ssc", ]) > 0) { desc[ desc$CAT == "wri-nfc-pop-ssc", ]$description = "POP: Social sc." }
-  if (nrow(desc[ desc$CAT == "wri-nfc-pro-fts", ]) > 0) { desc[ desc$CAT == "wri-nfc-pro-fts", ]$description = "PRO: Tech. sc." }
-  if (nrow(desc[ desc$CAT == "wri-nfc-pro-hum", ]) > 0) { desc[ desc$CAT == "wri-nfc-pro-hum", ]$description = "PRO: Humanities" }
-  if (nrow(desc[ desc$CAT == "wri-nfc-pro-nat", ]) > 0) { desc[ desc$CAT == "wri-nfc-pro-nat", ]$description = "PRO: Natural sc." }
-  if (nrow(desc[ desc$CAT == "wri-nfc-pro-ssc", ]) > 0) { desc[ desc$CAT == "wri-nfc-pro-ssc", ]$description = "PRO: Social sc." }
-  if (nrow(desc[ desc$CAT == "wri-nfc-sci-fts", ]) > 0) { desc[ desc$CAT == "wri-nfc-sci-fts", ]$description = "SCI: Tech. sc." }
-  if (nrow(desc[ desc$CAT == "wri-nfc-sci-hum", ]) > 0) { desc[ desc$CAT == "wri-nfc-sci-hum", ]$description = "SCI: Humanities" }
-  if (nrow(desc[ desc$CAT == "wri-nfc-sci-nat", ]) > 0) { desc[ desc$CAT == "wri-nfc-sci-nat", ]$description = "SCI: Natural sc." }
-  if (nrow(desc[ desc$CAT == "wri-nfc-sci-ssc", ]) > 0) { desc[ desc$CAT == "wri-nfc-sci-ssc", ]$description = "SCI: Social sc." }
-  if (nrow(desc[ desc$CAT == "wri-nmg-lei-hou", ]) > 0) { desc[ desc$CAT == "wri-nmg-lei-hou", ]$description = "Hobby mag." }
-  if (nrow(desc[ desc$CAT == "wri-nmg-lei-int", ]) > 0) { desc[ desc$CAT == "wri-nmg-lei-int", ]$description = "Interest. facts mag." }
-  if (nrow(desc[ desc$CAT == "wri-nmg-lei-lif", ]) > 0) { desc[ desc$CAT == "wri-nmg-lei-lif", ]$description = "Lifestyle mag." }
-  if (nrow(desc[ desc$CAT == "wri-nmg-lei-mix", ]) > 0) { desc[ desc$CAT == "wri-nmg-lei-mix", ]$description = "Misc. mag." }
-  if (nrow(desc[ desc$CAT == "wri-nmg-lei-sct", ]) > 0) { desc[ desc$CAT == "wri-nmg-lei-sct", ]$description = "Tabloids" }
-  if (nrow(desc[ desc$CAT == "wri-nmg-lei-spo", ]) > 0) { desc[ desc$CAT == "wri-nmg-lei-spo", ]$description = "Sport mag." }
-  if (nrow(desc[ desc$CAT == "wri-nmg-new-com", ]) > 0) { desc[ desc$CAT == "wri-nmg-new-com", ]$description = "Op-eds, columns" }
-  if (nrow(desc[ desc$CAT == "wri-nmg-new-cul", ]) > 0) { desc[ desc$CAT == "wri-nmg-new-cul", ]$description = "Culture news" }
-  if (nrow(desc[ desc$CAT == "wri-nmg-new-eco", ]) > 0) { desc[ desc$CAT == "wri-nmg-new-eco", ]$description = "Economic news" }
-  if (nrow(desc[ desc$CAT == "wri-nmg-new-fre", ]) > 0) { desc[ desc$CAT == "wri-nmg-new-fre", ]$description = "Leisure time art." }
-  if (nrow(desc[ desc$CAT == "wri-nmg-new-pol", ]) > 0) { desc[ desc$CAT == "wri-nmg-new-pol", ]$description = "Politics news" }
-  if (nrow(desc[ desc$CAT == "wri-nmg-new-rep", ]) > 0) { desc[ desc$CAT == "wri-nmg-new-rep", ]$description = "News" }
-  if (nrow(desc[ desc$CAT == "wri-pri--cor", ]) > 0) { desc[ desc$CAT == "wri-pri--cor", ]$description = "Letters" }
-  return(desc$description)
+  unname(cat2desc[as.character(cat)])
 }
