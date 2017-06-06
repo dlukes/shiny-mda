@@ -36,15 +36,15 @@ shinyServer(function(input, output, session) {
     updateSelectInput(session, "fx", choices=ffactors, selected=ffactors[1])
     updateSelectInput(session, "fy", choices=ffactors, selected=ffactors[2])
     modes <- levels(fdf$MODE)
-    updateCheckboxGroupInput(session, "mode", choices=modes, selected=modes, inline=TRUE)
+    updateCheckboxGroupInput(session, "mode", choices=modes, selected=modes)
     divisions <- levels(fdf$DIVISION)
-    updateCheckboxGroupInput(session, "division", choices=divisions, inline=TRUE)
+    updateCheckboxGroupInput(session, "division", choices=divisions)
 
     ldf <- unclass(env$load)
     ldf <- data.frame(Feature=row.names(ldf), ldf) %>%
       gather(Factor, Loading, -Feature, factor_key=TRUE)
     lfactors <- levels(ldf$Factor)
-    updateCheckboxGroupInput(session, "showfactors", choices=lfactors, selected=lfactors, inline=TRUE)
+    updateCheckboxGroupInput(session, "showfactors", choices=lfactors, selected=lfactors)
     updateSelectInput(session, "sortfactor", choices=c(colnames(feat2desc), lfactors))
 
     list(fdf=fdf, ffactors=ffactors, modes=modes, divisions=divisions,

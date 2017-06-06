@@ -7,26 +7,47 @@ shinyUI(fluidPage(
 
   sidebarLayout(
     sidebarPanel(
+      width=3,
       # bookmarking probably requires some more setup, or maybe it fails because of the initial error
       # in the app...?
       # bookmarkButton(),
       fileInput("rdata", "Upload your own data:", accept=".RData"),
       selectInput("results", "Results:", choices=fresults, selected=fresults[1]),
-      selectInput("fx", "X axis:", choices=c()),
-      selectInput("fy", "Y axis:", choices=c()),
-      checkboxGroupInput("mode", "Mode:", choices=c()),
-      checkboxGroupInput("division", "Division:", choices=c()),
-      h4("Selected chunk:"),
-      htmlOutput("click_info"),
-      textInput("cql", "CQL:", value='[lemma=".*"]'),
-      actionButton("search", "Search", onclick="kontextSearch()"),
-      tags$script(src="kontextSearch.js"),
-      tags$script(src="loadingsTable.js")
+      conditionalPanel(condition="input.tabsetPanel == 'Factors 2-dim'",
+        selectInput("fx", "X axis:", choices=c()),
+        selectInput("fy", "Y axis:", choices=c()),
+        fluidRow(
+          column(6, checkboxGroupInput("mode", "Mode:", choices=c())),
+          column(6, checkboxGroupInput("division", "Division:", choices=c()))
+        ),
+        h4("Selected chunk:"),
+        htmlOutput("click_info"),
+        textInput("cql", "CQL:", value='[lemma=".*"]'),
+        actionButton("search", "Search", onclick="kontextSearch()"),
+        tags$script(src="kontextSearch.js"),
+        tags$script(src="loadingsTable.js")
+      ),
+      conditionalPanel(condition="input.tabsetPanel == 'Factors Boxplots'",
+        div(
+          class="outer-range-wrapper",
+          sliderInput("perc", "Percentiles:", min=0, max=1, step=.05, value=c(.3, .7), width="100%")
+        )
+      ),
+      conditionalPanel(condition="input.tabsetPanel == 'Loadings Table'",
+        div(
+          class="outer-range-wrapper",
+          sliderInput("thresh", "Thresholds:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
+        ),
+        checkboxGroupInput("showfactors", "Show factors:", choices=c(), width="100%"),
+        selectInput("sortfactor", "Sort by:", choices=c())
+      )
     ),
 
     mainPanel(
-      id="main-panel",
+      id="mainPanel",
+      width=9,
       tabsetPanel(
+        id="tabsetPanel",
         tabPanel(
           "Factors 2-dim",
           plotOutput("fplot",
@@ -40,11 +61,6 @@ shinyUI(fluidPage(
         ),
         tabPanel(
           "Factors Boxplots",
-          br(),
-          div(
-            class="outer-range-wrapper",
-            sliderInput("perc", "Percentiles:", min=0, max=1, step=.05, value=c(.3, .7), width="100%")
-          ),
           plotOutput("d1plot"),
           plotOutput("d2plot")
         ),
@@ -54,15 +70,6 @@ shinyUI(fluidPage(
         ),
         tabPanel(
           "Loadings Table",
-          br(),
-          div(
-            class="outer-range-wrapper",
-            sliderInput("thresh", "Thresholds:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
-          ),
-          fluidRow(
-            column(6, checkboxGroupInput("showfactors", "Show factors:", choices=c(), width="100%")),
-            column(6, selectInput("sortfactor", "Sort by:", choices=c()))
-          ),
           tableOutput("ltable")
         )
       )
