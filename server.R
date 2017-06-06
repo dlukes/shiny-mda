@@ -45,7 +45,7 @@ shinyServer(function(input, output, session) {
       gather(Factor, Loading, -Feature, factor_key=TRUE)
     lfactors <- levels(ldf$Factor)
     updateCheckboxGroupInput(session, "showfactors", choices=lfactors, selected=lfactors, inline=TRUE)
-    updateSelectInput(session, "sortfactor", choices=c("Feature", lfactors))
+    updateSelectInput(session, "sortfactor", choices=c(colnames(feat2desc), lfactors))
 
     list(fdf=fdf, ffactors=ffactors, modes=modes, divisions=divisions,
          ldf=ldf, lfactors=lfactors)
@@ -138,7 +138,7 @@ shinyServer(function(input, output, session) {
     data <- data()
     thresh <- input$thresh
     sortfactor <- input$sortfactor
-    if (sortfactor != "Feature") sortfactor <- paste0("desc(", sortfactor, ")")
+    if (!sortfactor %in% colnames(feat2desc)) sortfactor <- paste0("desc(", sortfactor, ")")
     showfactors <- getDefault(input$showfactors, data$lfactors)
     filter(data$ldf, (Loading < thresh[1] | Loading > thresh[2]) & Factor %in% showfactors) %>%
       spread(Factor, Loading) %>%
