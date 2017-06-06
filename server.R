@@ -1,7 +1,7 @@
 library(ggplot2)
 library(tidyr)
 library(dplyr)
-library(Cairo)   # For nicer ggplot2 output when deployed on Linux
+library(Cairo)  # For nicer ggplot2 output when deployed on Linux
 
 source("dim_graph.R")
 
