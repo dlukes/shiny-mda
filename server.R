@@ -30,6 +30,7 @@ shinyServer(function(input, output, session) {
     env <- as.list(env)
 
     fdf <- env$factors
+    fdf$X <- row.names(fdf)
     ffactors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(fdf), value=TRUE, invert=TRUE)
     fdf$DIVISION <- factor(fdf$DIVISION, c("int", "nin", "mul", "uni", "fic", "nfc", "nmg", "pri"),
                           c("spo-int", "spo-nin", "web-mul", "web-uni", "wri-fic", "wri-nfc", "wri-nmg", "wri-pri"))
