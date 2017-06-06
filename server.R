@@ -8,10 +8,6 @@ source("dim_graph.R")
 palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 feat2desc <- read.csv("./conf/feat2desc.csv")
 
-getDefault <- function(value, default) {
-  if (is.null(value) || value == "") default else value
-}
-
 shinyServer(function(input, output, session) {
   ###################################################################################################
   # DATA
@@ -48,8 +44,7 @@ shinyServer(function(input, output, session) {
     updateCheckboxGroupInput(session, "showfactors", choices=lfactors, selected=lfactors)
     updateSelectInput(session, "sortfactor", choices=c(colnames(feat2desc), lfactors))
 
-    list(fdf=fdf, ffactors=ffactors, modes=modes, divisions=divisions,
-         ldf=ldf, lfactors=lfactors)
+    list(fdf=fdf, ldf=ldf, lfactors=lfactors)
   })
 
   ###################################################################################################
@@ -58,14 +53,28 @@ shinyServer(function(input, output, session) {
   ranges <- reactiveValues(x=NULL, y=NULL)
 
   output$fplot <- renderPlot({
-    data <- data()
-    fdf <- data$fdf
-    factors <- data$ffactors
-    fx <- getDefault(input$fx, factors[1])
-    fy <- getDefault(input$fy, factors[2])
-    modes <- getDefault(input$mode, data$modes)
-    divisions <- getDefault(input$division, data$divisions)
-    filtered <- subset(fdf, MODE %in% modes | DIVISION %in% divisions)
+    fdf <- data()$fdf
+    fx <- input$fx
+    fy <- input$fy
+    filtered <- filter(fdf, MODE %in% input$mode | DIVISION %in% input$division)
+    # NOTE: For some reason, the inputs may not be completely initialized when the first attempt to
+    # render the plot is made, in which case the filtering above returns an empty data frame and
+    # plotting it would result in an error. Returning early when the data frame is empty prevents
+    # the error from happening (= no ugly red message shown to the user) and the plot is re-rendered
+    # as soon as the inputs are initialized.
+    #
+    # In theory, all rendering calls might be affected by this, but in practice, since this is the
+    # tab shown by default in the UI, it's sufficient to perform the check only here.
+    #
+    # An alternative / previous solution was to return possible default values as part of the `data`
+    # reactive and use a `getDefault()` function to revert to a fallback when the value was
+    # unspecified, but that actually leads to nasty corner cases, because inputs may be empty both
+    # because they're uninitialized OR because the user has unchecked all checkboxes (for instance),
+    # in which case we actually want to keep the empty value. Handling all of this properly is more
+    # trouble than it's worth, exiting on an empty source data frame is simpler and cleaner.
+    if (nrow(filtered) == 0) {
+      return()
+    }
     ggplot(filtered, aes_string(fx, fy, color="DIVISION")) +
       geom_point(aes_string(fx, fy), transform(fdf, MODE=NULL), color="grey", alpha=.2) +
       geom_point(aes_string(shape="MODE"), alpha=.4, size=5) +
@@ -91,13 +100,11 @@ shinyServer(function(input, output, session) {
   })
 
   output$click_info <- renderPrint({
-    data <- data()
     # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
     # were a base graphics plot, we'd need those.
-    point <- nearPoints(data$fdf, input$fplot_click, addDist=TRUE)[1, ]
-    factors <- data$ffactors
-    fx <- getDefault(input$fx, factors[1])
-    fy <- getDefault(input$fy, factors[2])
+    point <- nearPoints(data()$fdf, input$fplot_click, addDist=TRUE)[1, ]
+    fx <- input$fx
+    fy <- input$fy
     id <- point$X
     withTags(div(p(b(paste0(fx, ":")), point[[fx]]),
                  p(b(paste0(fy, ":")), point[[fy]]),
@@ -112,12 +119,10 @@ shinyServer(function(input, output, session) {
   # BIBER PLOTS
 
   output$d1plot <- renderPlot({
-    data <- data()
-    DimDraw(data$fdf, factor.name=input$fx, low.perc=input$perc[1], up.perc=input$perc[2])
+    DimDraw(data()$fdf, factor.name=input$fx, low.perc=input$perc[1], up.perc=input$perc[2])
   })
   output$d2plot <- renderPlot({
-    data <- data()
-    DimDraw(data$fdf, factor.name=input$fy, low.perc=input$perc[1], up.perc=input$perc[2])
+    DimDraw(data()$fdf, factor.name=input$fy, low.perc=input$perc[1], up.perc=input$perc[2])
   })
 
   ###################################################################################################
@@ -140,8 +145,7 @@ shinyServer(function(input, output, session) {
     thresh <- input$thresh
     sortfactor <- input$sortfactor
     if (!sortfactor %in% colnames(feat2desc)) sortfactor <- paste0("desc(", sortfactor, ")")
-    showfactors <- getDefault(input$showfactors, data$lfactors)
-    filter(data$ldf, (Loading < thresh[1] | Loading > thresh[2]) & Factor %in% showfactors) %>%
+    filter(data$ldf, (Loading < thresh[1] | Loading > thresh[2]) & Factor %in% input$showfactors) %>%
       spread(Factor, Loading) %>%
       inner_join(feat2desc, .) %>%
       arrange_(sortfactor)
