@@ -1,4 +1,4 @@
-fresults <- sort(list.files("results/factors", pattern="\\.csv$", full.names=TRUE), decreasing=TRUE)
+fresults <- sort(list.files("results", pattern="\\.RData$", full.names=TRUE), decreasing=TRUE)
 names(fresults) <- tools::file_path_sans_ext(basename(fresults))
 
 shinyUI(fluidPage(
@@ -10,12 +10,7 @@ shinyUI(fluidPage(
       # bookmarking probably requires some more setup, or maybe it fails because of the initial error
       # in the app...?
       # bookmarkButton(),
-      fileInput("csv", "Upload your own data:",
-                accept=c(
-                  "text/csv",
-                  "text/comma-separated-values"
-                )
-      ),
+      fileInput("rdata", "Upload your own data:", accept=".RData"),
       selectInput("results", "Results:", choices=fresults, selected=fresults[1]),
       selectInput("fx", "X axis:", choices=c()),
       selectInput("fy", "Y axis:", choices=c()),

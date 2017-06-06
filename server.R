@@ -8,48 +8,63 @@ source("dim_graph.R")
 palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 feat2desc <- read.csv("./conf/feat2desc.csv")
 
-defaultIfEmptyString <- function(value, default) {
-  if (value == "") default else value
+getDefault <- function(value, default) {
+  if (is.null(value) || value == "") default else value
 }
 
 shinyServer(function(input, output, session) {
-
   ###################################################################################################
-  # TWO-DIMENSIONAL PLOT
+  # DATA
 
   data <- reactive({
-    if (is.null(input$csv)) {
-      csv <- input$results
-      # name <- csv
+    if (is.null(input$rdata)) {
+      rdata <- input$results
+      # name <- rdata
     } else {
-      csv <- input$csv$datapath
-      # name <- input$csv$name
+      rdata <- input$rdata$datapath
+      # name <- input$rdata$name
     }
 
-    fdf <- read.csv(csv)
-    factors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(fdf), value=TRUE, invert=TRUE)
+    env <- new.env()
+    load(rdata, env)
+    env <- as.list(env)
+
+    fdf <- env$factors
+    ffactors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(fdf), value=TRUE, invert=TRUE)
     fdf$DIVISION <- factor(fdf$DIVISION, c("int", "nin", "mul", "uni", "fic", "nfc", "nmg", "pri"),
                           c("spo-int", "spo-nin", "web-mul", "web-uni", "wri-fic", "wri-nfc", "wri-nmg", "wri-pri"))
-
-    updateSelectInput(session, "fx", choices=factors, selected=factors[1])
-    updateSelectInput(session, "fy", choices=factors, selected=factors[2])
+    updateSelectInput(session, "fx", choices=ffactors, selected=ffactors[1])
+    updateSelectInput(session, "fy", choices=ffactors, selected=ffactors[2])
     modes <- levels(fdf$MODE)
     updateCheckboxGroupInput(session, "mode", choices=modes, selected=modes, inline=TRUE)
     divisions <- levels(fdf$DIVISION)
     updateCheckboxGroupInput(session, "division", choices=divisions, inline=TRUE)
 
-    list(fdf=fdf, factors=factors, modes=modes, divisions=divisions)
+    ldf <- unclass(env$load)
+    ldf <- data.frame(Feature=row.names(ldf), ldf) %>%
+      gather(Factor, Loading, -Feature, factor_key=TRUE)
+    lfactors <- levels(ldf$Factor)
+    updateCheckboxGroupInput(session, "showfactors", choices=lfactors, selected=lfactors, inline=TRUE)
+    updateSelectInput(session, "sortfactor", choices=c("Feature", lfactors))
+
+    list(fdf=fdf, ffactors=ffactors, modes=modes, divisions=divisions,
+         ldf=ldf, lfactors=lfactors)
   })
+
+  ###################################################################################################
+  # TWO-DIMENSIONAL PLOT
 
   ranges <- reactiveValues(x=NULL, y=NULL)
 
   output$fplot <- renderPlot({
     data <- data()
     fdf <- data$fdf
-    factors <- data$factors
-    fx <- defaultIfEmptyString(input$fx, factors[1])
-    fy <- defaultIfEmptyString(input$fy, factors[2])
-    filtered <- subset(fdf, MODE %in% input$mode | DIVISION %in% input$division)
+    factors <- data$ffactors
+    fx <- getDefault(input$fx, factors[1])
+    fy <- getDefault(input$fy, factors[2])
+    modes <- getDefault(input$mode, data$modes)
+    divisions <- getDefault(input$division, data$divisions)
+    filtered <- subset(fdf, MODE %in% modes | DIVISION %in% divisions)
     ggplot(filtered, aes_string(fx, fy, color="DIVISION")) +
       geom_point(aes_string(fx, fy), transform(fdf, MODE=NULL), color="grey", alpha=.2) +
       geom_point(aes_string(shape="MODE"), alpha=.4, size=5) +
@@ -79,9 +94,9 @@ shinyServer(function(input, output, session) {
     # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
     # were a base graphics plot, we'd need those.
     point <- nearPoints(data$fdf, input$fplot_click, addDist=TRUE)[1, ]
-    factors <- data$factors
-    fx <- defaultIfEmptyString(input$fx, factors[1])
-    fy <- defaultIfEmptyString(input$fy, factors[2])
+    factors <- data$ffactors
+    fx <- getDefault(input$fx, factors[1])
+    fy <- getDefault(input$fy, factors[2])
     id <- point$X
     withTags(div(p(b(paste0(fx, ":")), point[[fx]]),
                  p(b(paste0(fy, ":")), point[[fy]]),
@@ -91,51 +106,6 @@ shinyServer(function(input, output, session) {
                  p(b("CLASS:"), point$CLASS),
                  p(b("ID:"), span(id, id="chunk_id"))))
   })
-
-  ###################################################################################################
-  # LOADINGS
-
-  ldata <- reactive({
-    if (!is.null(input$csv)) {
-      stop("Loadings are available only with preloaded data.")
-    }
-    ldf <- read.csv(file.path("results", "loadings", basename(input$results))) %>%
-      select(-X)
-    factors <- levels(ldf$Factor)
-    updateCheckboxGroupInput(session, "showfactors", choices=factors, selected=factors, inline=TRUE)
-    updateSelectInput(session, "sortfactor", choices=c("Feature", factors))
-    ldf
-  })
-
-  output$lplot <- renderPlot({
-    ggplot(ldata(), aes(Feature, abs(Loading), fill=Loading)) +
-      facet_wrap(~Factor, nrow=1) +
-      geom_bar(stat="identity") +
-      coord_flip() +
-      scale_fill_gradient2(name="Loading",
-                           high="blue", mid="white", low="red",
-                           midpoint=0, guide="colourbar") +
-      ylab("Loading Strength") +
-      theme_bw(base_size=8)
-  })
-
-  ltable <- reactive({
-    thresh <- input$thresh
-    sortfactor <- input$sortfactor
-    if (sortfactor != "Feature") sortfactor <- paste0("desc(", sortfactor, ")")
-    filter(ldata(), (Loading < thresh[1] | Loading > thresh[2]) & Factor %in% input$showfactors) %>%
-      spread(Factor, Loading) %>%
-      inner_join(feat2desc, .) %>%
-      arrange_(sortfactor)
-  })
-  # NOTE: if a reactive function parameter needs to use a reactive value, wrap it in a function,
-  # it will be evaluated in an active reactive context
-  align <- function() {
-    align <- rep("?", ncol(ltable()))
-    align[c(1, 2)] <- c("r", "l")
-    align <- paste0(align, collapse="")
-  }
-  output$ltable <- renderTable(ltable(), align=align, spacing="xs", na="", hover=TRUE)
 
   ###################################################################################################
   # BIBER PLOTS
@@ -148,4 +118,39 @@ shinyServer(function(input, output, session) {
     data <- data()
     DimDraw(data$fdf, factor.name=input$fy, low.perc=input$perc[1], up.perc=input$perc[2])
   })
+
+  ###################################################################################################
+  # LOADINGS
+
+  output$lplot <- renderPlot({
+    ggplot(data()$ldf, aes(Feature, abs(Loading), fill=Loading)) +
+      facet_wrap(~Factor, nrow=1) +
+      geom_bar(stat="identity") +
+      coord_flip() +
+      scale_fill_gradient2(name="Loading",
+                           high="blue", mid="white", low="red",
+                           midpoint=0, guide="colourbar") +
+      ylab("Loading Strength") +
+      theme_bw(base_size=8)
+  })
+
+  ltable <- reactive({
+    data <- data()
+    thresh <- input$thresh
+    sortfactor <- input$sortfactor
+    if (sortfactor != "Feature") sortfactor <- paste0("desc(", sortfactor, ")")
+    showfactors <- getDefault(input$showfactors, data$lfactors)
+    filter(data$ldf, (Loading < thresh[1] | Loading > thresh[2]) & Factor %in% showfactors) %>%
+      spread(Factor, Loading) %>%
+      inner_join(feat2desc, .) %>%
+      arrange_(sortfactor)
+  })
+  # NOTE: if a reactive function parameter needs to use a reactive value, wrap it in a function,
+  # it will be evaluated in an active reactive context
+  align <- function() {
+    align <- rep("?", ncol(ltable()))
+    align[c(1, 2)] <- c("r", "l")
+    align <- paste0(align, collapse="")
+  }
+  output$ltable <- renderTable(ltable(), align=align, spacing="xs", na="", hover=TRUE)
 })
