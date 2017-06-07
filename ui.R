@@ -23,9 +23,7 @@ shinyUI(fluidPage(
         h4("Selected chunk:"),
         htmlOutput("click_info"),
         textInput("cql", "CQL:", value='[lemma=".*"]'),
-        actionButton("search", "Search", onclick="kontextSearch()"),
-        tags$script(src="kontextSearch.js"),
-        tags$script(src="loadingsTable.js")
+        actionButton("search", "Search", onclick="kontextSearch()")
       ),
       conditionalPanel(condition="input.tabsetPanel == 'Factors Boxplots'",
         div(
@@ -74,5 +72,7 @@ shinyUI(fluidPage(
         )
       )
     )
-  )
+  ),
+  tags$script(src="kontextSearch.js"),
+  tags$script(src="loadingsTable.js")
 ))
