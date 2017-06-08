@@ -1,11 +1,11 @@
 Feature,Description,Category,Subcategory
 PROTV,protetické v,fonologie,konsonanty
-FEI,úžení é v í v kořeni,fonologie,vokály
-FEIK,úžení é v í v koncovce,fonologie,vokály
-FYEJ,přehláska ý > ej v kořeni,fonologie,vokály
-FYEJK,přehláska ý > ej v koncovce,fonologie,vokály
-FUOU,"přehláska ú > ou, příznakové ou (iniciální)",fonologie,vokály
-FOUU,"přehláska ú > ou, příznakové ú (mediální a finální)",fonologie,vokály
+FEI,úžení é > í v kořeni,fonologie,vokály
+FEIK,úžení é > í v koncovce,fonologie,vokály
+FYEJ,změna ý > ej v kořeni,fonologie,vokály
+FYEJK,změna ý > ej v koncovce,fonologie,vokály
+FUOU,"změna ú > ou, příznakové ou (iniciální)",fonologie,vokály
+FOUU,"změna ú > ou, příznakové ú (mediální a finální)",fonologie,vokály
 WL,průměrná délka slova,fonologie,
 EUF,eufonie,fonologie,
 ZKR,zkrácené formy,fonologie,verba
@@ -56,7 +56,7 @@ LOK,lokál,morfologie,nouns
 NOM,nominativ,morfologie,nouns
 CAS,předložkové pády obecně,morfologie,"nouns, pronouns"
 AMA,koncovka -ma,morfologie,nouns
-IEK,morfologická konkurence koncovek -é vs. -i,morfologie,substantiva
+IEK,konkurence koncovek -é vs. -i v Npl.,morfologie,substantiva
 GENF,feminina,morfologie,substantiva
 GENI,maskulina inanim.,morfologie,substantiva
 GENM,maskulina anim.,morfologie,substantiva
@@ -70,13 +70,13 @@ VIM,imperativ,morfologie,verba
 VIN,indikativ,morfologie,verba
 VTE3,slovesný čas - bud.,morfologie,verba
 VTE1,slovesný čas - min,morfologie,verba
-VVO,slovesný rod,morfologie,verba
+VVO,slovesný rod (pasivum),morfologie,verba
 TRGR,přechodníky,morfologie,verba
 VTE2,slovesný čas - přít.,morfologie,verba
 NEG1,negace větná,morfologie,verba
 VF,verba finita,morfologie,verba
 BYTS,"pomocné ""být"" ve formě -s",morfologie,verba
-VAS,slovesný vid,morfologie,
+VAS,slovesný vid (perf.),morfologie,
 VCO,kondicionál,morfologie,verba
 NEG2,negace lexikální,morfologie,
 NEG4,negace členská,morfologie,
@@ -148,12 +148,12 @@ TCASE,titlecase,technikálie,velikost písma
 UCASE,uppercase,technikálie,velikost písma
 MCASE,mixed case,technikálie,velikost písma
 COH2,částice členící text,text,partikule
-QUE2,"otázky ""všechny""",text,věta
-QUE1,"otázky ""doplňovací""",text,věta
+QUE2,"otázky (všechny)",text,věta
+QUE1,"otázky (doplňovací)",text,věta
 PHRA,frazeologie,text,
 REP,opakování slov,text,
-LR,lexikální bohatost,text,
+LR,Yulův koeficient,text,
 TC,tematická koncentrace,text,
-BIG,bigramy,text,
-UNG,unigramy,text,
-NGR,ngramy,pragmatika,text
+BIG,bigramy (zTTR),text,
+UNG,unigramy (zTTR),text,
+NGR,frekventované ngramy,pragmatika,text
