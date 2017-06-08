@@ -13,9 +13,11 @@ shinyUI(fluidPage(
       # bookmarkButton(),
       fileInput("rdata", "Upload your own data:", accept=".RData"),
       selectInput("results", "Results:", choices=fresults, selected=fresults[1]),
-      conditionalPanel(condition="input.tabsetPanel == 'Factors 2-dim'",
+      conditionalPanel(condition="/^Factors/.test(input.tabsetPanel)",
         selectInput("fx", "X axis:", choices=c()),
-        selectInput("fy", "Y axis:", choices=c()),
+        selectInput("fy", "Y axis:", choices=c())
+      ),
+      conditionalPanel(condition="input.tabsetPanel == 'Factors 2-dim'",
         fluidRow(
           column(6, checkboxGroupInput("mode", "Mode:", choices=c())),
           column(6, checkboxGroupInput("division", "Division:", choices=c()))
