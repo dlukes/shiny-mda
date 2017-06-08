@@ -58,25 +58,13 @@ shinyServer(function(input, output, session) {
     fdf <- data()$fdf
     fx <- input$fx
     fy <- input$fy
-    filtered <- filter(fdf, MODE %in% input$mode | DIVISION %in% input$division)
-    # NOTE: For some reason, the inputs may not be completely initialized when the first attempt to
-    # render the plot is made, in which case the filtering above returns an empty data frame and
-    # plotting it would result in an error. Returning early when the data frame is empty prevents
-    # the error from happening (= no ugly red message shown to the user) and the plot is re-rendered
-    # as soon as the inputs are initialized.
-    #
-    # In theory, all rendering calls might be affected by this, but in practice, since this is the
-    # tab shown by default in the UI, it's sufficient to perform the check only here.
-    #
-    # An alternative / previous solution was to return possible default values as part of the `data`
-    # reactive and use a `getDefault()` function to revert to a fallback when the value was
-    # unspecified, but that actually leads to nasty corner cases, because inputs may be empty both
-    # because they're uninitialized OR because the user has unchecked all checkboxes (for instance),
-    # in which case we actually want to keep the empty value. Handling all of this properly is more
-    # trouble than it's worth, exiting on an empty source data frame is simpler and cleaner.
-    if (nrow(filtered) == 0) {
-      return()
-    }
+    mode <- input$mode
+    division <- input$division
+    # there needs to be at least one value selected among the mode and division checkbox groups,
+    # but one of the checkbox groups is allowed to be completely unselected, so that's why they
+    # should be checked together: they constitute a single requirement for input
+    req(fx, fy, c(mode, division))
+    filtered <- filter(fdf, MODE %in% mode | DIVISION %in% division)
     ggplot(filtered, aes_string(fx, fy, color="DIVISION")) +
       geom_point(aes_string(fx, fy), transform(fdf, MODE=NULL), color="grey", alpha=.2) +
       geom_point(aes_string(shape="MODE"), alpha=.4, size=5) +
@@ -102,11 +90,13 @@ shinyServer(function(input, output, session) {
   })
 
   output$click_info <- renderPrint({
-    # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
-    # were a base graphics plot, we'd need those.
-    point <- nearPoints(data()$fdf, input$fplot_click, addDist=TRUE)[1, ]
+    fplot_click <- input$fplot_click
     fx <- input$fx
     fy <- input$fy
+    req(fplot_click, fx, fy)
+    # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
+    # were a base graphics plot, we'd need those.
+    point <- nearPoints(data()$fdf, fplot_click, addDist=TRUE)[1, ]
     id <- point$X
     withTags(div(p(b(paste0(fx, ":")), point[[fx]]),
                  p(b(paste0(fy, ":")), point[[fy]]),
@@ -120,12 +110,16 @@ shinyServer(function(input, output, session) {
   ###################################################################################################
   # BIBER PLOTS
 
-  output$d1plot <- renderPlot({
-    DimDraw(data()$fdf, factor.name=input$fx, low.perc=input$perc[1], up.perc=input$perc[2])
-  })
-  output$d2plot <- renderPlot({
-    DimDraw(data()$fdf, factor.name=input$fy, low.perc=input$perc[1], up.perc=input$perc[2])
-  })
+  dplot <- function(factor) {
+    renderPlot({
+      perc <- input$perc
+      req(factor, perc)
+      DimDraw(data()$fdf, factor.name=factor, low.perc=perc[1], up.perc=perc[2])
+    })
+  }
+
+  output$d1plot <- dplot(input$fx)
+  output$d2plot <- dplot(input$fy)
 
   ###################################################################################################
   # LOADINGS
@@ -145,7 +139,9 @@ shinyServer(function(input, output, session) {
   ltable <- reactive({
     data <- data()
     thresh <- input$thresh
-    filter(data$ldf, (Loading < thresh[1] | Loading > thresh[2]) & Factor %in% input$showfactors) %>%
+    showfactors <- input$showfactors
+    req(thresh, showfactors)
+    filter(data$ldf, (Loading < thresh[1] | Loading > thresh[2]) & Factor %in% showfactors) %>%
       spread(Factor, Loading) %>%
       inner_join(feat2desc, .)
   })
