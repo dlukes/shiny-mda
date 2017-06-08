@@ -112,14 +112,15 @@ shinyServer(function(input, output, session) {
 
   dplot <- function(factor) {
     renderPlot({
+      factor <- input[[factor]]
       perc <- input$perc
       req(factor, perc)
       DimDraw(data()$fdf, factor.name=factor, low.perc=perc[1], up.perc=perc[2])
     })
   }
 
-  output$d1plot <- dplot(input$fx)
-  output$d2plot <- dplot(input$fy)
+  output$d1plot <- dplot("fx")
+  output$d2plot <- dplot("fy")
 
   ###################################################################################################
   # LOADINGS
