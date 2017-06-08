@@ -1,4 +1,4 @@
-(function() {
+function(row, data) {
   /* palette generated in R with:
      library(pals)
      warmcool(length(seq(-1, 1, .1)))
@@ -8,10 +8,13 @@
     "#F0C9B5", "#E8D4C9", "#DDDDDD", "#CFD8E9", "#BFD2F3", "#AFC9FB", "#9EBDFE", "#8CAEFC",
     "#7B9DF7", "#698AEF", "#5876E1", "#4961D1", "#3B4CC0"
   ];
+  var colIdx = 0;
 
   function colorize() {
     var value = this.innerHTML.trim();
-    if (/^[\d\.\-]+$/.test(value)) {
+    if (colIdx === 0) {
+      $(this).addClass("dt-right");
+    } else if (/^[\d\.\-]+$/.test(value)) {
       value = parseFloat(value);
       var round = value < 0 ? Math.floor : Math.ceil;
       var colorIdx = round((value + 1) / 2 * 20);
@@ -20,17 +23,10 @@
       if (Math.abs(value) > 0.6) {
         this.style.color = "white";
       }
+      this.innerHTML = value.toFixed(2);
     }
+    colIdx++;
   }
 
-  $(document).on("shiny:value", function(e) {
-    if (e.name == "ltable") {
-      e.preventDefault();
-      $("#ltable")
-        .removeClass("shiny-output-error")
-        .html(e.value)
-        .find("td")
-        .each(colorize);
-    }
-  });
-})();
+  $(row).find("td").each(colorize);
+}

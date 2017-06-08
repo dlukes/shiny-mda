@@ -1,12 +1,14 @@
 library(ggplot2)
 library(tidyr)
 library(dplyr)
+library(readr)
 library(Cairo)  # For nicer ggplot2 output when deployed on Linux
 
 source("dim_graph.R")
 
 palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 feat2desc <- read.csv("./conf/feat2desc.csv")
+ltable_js <- read_file("./www/loadingsTable.js")
 
 shinyServer(function(input, output, session) {
   ###################################################################################################
@@ -143,12 +145,9 @@ shinyServer(function(input, output, session) {
   ltable <- reactive({
     data <- data()
     thresh <- input$thresh
-    sortfactor <- input$sortfactor
-    if (!sortfactor %in% colnames(feat2desc)) sortfactor <- paste0("desc(", sortfactor, ")")
     filter(data$ldf, (Loading < thresh[1] | Loading > thresh[2]) & Factor %in% input$showfactors) %>%
       spread(Factor, Loading) %>%
-      inner_join(feat2desc, .) %>%
-      arrange_(sortfactor)
+      inner_join(feat2desc, .)
   })
   # NOTE: if a reactive function parameter needs to use a reactive value, wrap it in a function,
   # it will be evaluated in an active reactive context
@@ -157,5 +156,13 @@ shinyServer(function(input, output, session) {
     align[c(1, 2)] <- c("r", "l")
     align <- paste0(align, collapse="")
   }
-  output$ltable <- renderTable(ltable(), align=align, spacing="xs", na="", hover=TRUE)
+  output$ltable <- DT::renderDataTable(
+    ltable(), filter="top", style="bootstrap", class=c("compact", "hover"), rownames=FALSE, selection="none",
+    options=list(
+      paging=FALSE,
+      bInfo=FALSE,
+      searching=FALSE,
+      select=FALSE,
+      rowCallback=DT::JS(ltable_js)
+  ))
 })

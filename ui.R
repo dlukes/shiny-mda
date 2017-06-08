@@ -34,10 +34,9 @@ shinyUI(fluidPage(
       conditionalPanel(condition="input.tabsetPanel == 'Loadings Table'",
         div(
           class="outer-range-wrapper",
-          sliderInput("thresh", "Thresholds:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
+          sliderInput("thresh", "Global thresholds:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
         ),
-        checkboxGroupInput("showfactors", "Show factors:", choices=c(), width="100%"),
-        selectInput("sortfactor", "Sort by:", choices=c())
+        checkboxGroupInput("showfactors", "Show factors:", choices=c(), width="100%")
       )
     ),
 
@@ -68,11 +67,10 @@ shinyUI(fluidPage(
         ),
         tabPanel(
           "Loadings Table",
-          tableOutput("ltable")
+          DT::dataTableOutput("ltable")
         )
       )
     )
   ),
-  tags$script(src="kontextSearch.js"),
-  tags$script(src="loadingsTable.js")
+  tags$script(src="kontextSearch.js")
 ))
