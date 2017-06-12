@@ -10,7 +10,7 @@ palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "
 feat2desc <- read.csv("./conf/feat2desc.csv")
 ltable_js <- read_file("./www/loadingsTable.js")
 
-shinyServer(function(input, output, session) {
+function(input, output, session) {
   ###################################################################################################
   # DATA
 
@@ -162,4 +162,4 @@ shinyServer(function(input, output, session) {
       select=FALSE,
       rowCallback=DT::JS(ltable_js)
   ))
-})
+}

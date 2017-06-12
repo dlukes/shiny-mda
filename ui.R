@@ -1,7 +1,7 @@
 fresults <- sort(list.files("results", pattern="\\.RData$", full.names=TRUE), decreasing=TRUE)
 names(fresults) <- tools::file_path_sans_ext(basename(fresults))
 
-shinyUI(fluidPage(
+function(request) { fluidPage(
   titlePanel("Shiny Happy MDA"),
   tags$head(tags$link(rel="stylesheet", type="text/css", href="mda.css")),
 
@@ -75,4 +75,4 @@ shinyUI(fluidPage(
     )
   ),
   tags$script(src="kontextSearch.js")
-))
+)}
