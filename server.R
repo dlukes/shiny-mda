@@ -76,8 +76,8 @@ function(input, output, session) {
     # NOTE (#DTState 2/3): only when restoring state from a bookmarked session do we allow the saved
     # state to be applied to the DataTable
     session$userData$ltable_state <- DT::JS(paste0(
-      "function(settings, data) {\n",
-      "Object.assign(data, ", toJSON(state$input$ltable_state, auto_unbox=TRUE), ");\n",
+      "function() {\n",
+      "return ", toJSON(state$input$ltable_state, auto_unbox=TRUE), ";\n",
       "}"
     ))
   })
@@ -194,7 +194,7 @@ function(input, output, session) {
                 rownames=FALSE, selection="none",
                 options=list(
                   stateSave=TRUE,
-                  stateLoadParams=session$userData$ltable_state,
+                  stateLoadCallback=session$userData$ltable_state,
                   paging=FALSE,
                   bInfo=FALSE,
                   select=FALSE,
