@@ -8,9 +8,7 @@ function(request) { fluidPage(
   sidebarLayout(
     sidebarPanel(
       width=3,
-      # bookmarking probably requires some more setup, or maybe it fails because of the initial error
-      # in the app...?
-      # bookmarkButton(),
+      bookmarkButton(),
       fileInput("rdata", "Upload your own data:", accept=".RData"),
       selectInput("results", "Results:", choices=fresults, selected=fresults[1]),
       conditionalPanel(condition="/^Factors/.test(input.tabsetPanel)",

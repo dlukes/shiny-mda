@@ -1,7 +1,9 @@
 # Bookmarking
 
-Fix bookmarking functionality. Perhaps the only thing that's needed is to get
-rid of the initial error...? → It's not.
+Kind of working right now, apart from the fact that datatable filtering gets
+applied, but the UI doesn't reflect the filters. Which is probably a bug in
+state restoration on the datatable side of things, not on my end, so maybe
+report it...?
 
 # DataTables
 

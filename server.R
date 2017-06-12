@@ -2,13 +2,25 @@ library(ggplot2)
 library(tidyr)
 library(dplyr)
 library(readr)
+library(jsonlite)
 library(Cairo)  # For nicer ggplot2 output when deployed on Linux
 
 source("dim_graph.R")
 
 palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 feat2desc <- read.csv("./conf/feat2desc.csv")
-ltable_js <- read_file("./www/loadingsTable.js")
+ltable_js <- DT::JS(read_file("./www/loadingsTable.js"))
+ltable_state_default <- DT::JS("function(settings, data) { return false; }")
+
+# This function encapsulates all changes to the UI that are driven by input data, which means they
+# need a special treatment w.r.t. bookmarking.
+dataDrivenUIUpdate <- function(session, mode, division, fx, fy, showfactors) {
+  updateCheckboxGroupInput(session, "mode", choices=mode[[1]], selected=mode[[2]])
+  updateCheckboxGroupInput(session, "division", choices=division[[1]], selected=division[[2]])
+  updateSelectInput(session, "fx", choices=fx[[1]], selected=fx[[2]])
+  updateSelectInput(session, "fy", choices=fy[[1]], selected=fy[[2]])
+  updateCheckboxGroupInput(session, "showfactors", choices=showfactors[[1]], selected=showfactors[[2]])
+}
 
 function(input, output, session) {
   ###################################################################################################
@@ -32,20 +44,51 @@ function(input, output, session) {
     ffactors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(fdf), value=TRUE, invert=TRUE)
     fdf$DIVISION <- factor(fdf$DIVISION, c("int", "nin", "mul", "uni", "fic", "nfc", "nmg", "pri"),
                           c("spo-int", "spo-nin", "web-mul", "web-uni", "wri-fic", "wri-nfc", "wri-nmg", "wri-pri"))
-    updateSelectInput(session, "fx", choices=ffactors, selected=ffactors[1])
-    updateSelectInput(session, "fy", choices=ffactors, selected=ffactors[2])
     modes <- levels(fdf$MODE)
-    updateCheckboxGroupInput(session, "mode", choices=modes, selected=modes)
     divisions <- levels(fdf$DIVISION)
-    updateCheckboxGroupInput(session, "division", choices=divisions)
 
     ldf <- unclass(env$load)
     ldf <- data.frame(Feature=row.names(ldf), ldf) %>%
       gather(Factor, Loading, -Feature, factor_key=TRUE)
     lfactors <- levels(ldf$Factor)
-    updateCheckboxGroupInput(session, "showfactors", choices=lfactors, selected=lfactors)
+
+    dataDrivenUIUpdate(session,
+      mode=list(modes, modes),
+      division=list(divisions, NULL),
+      fx=list(ffactors, ffactors[1]),
+      fy=list(ffactors, ffactors[2]),
+      showfactors=list(lfactors, lfactors)
+    )
 
     list(fdf=fdf, ldf=ldf, lfactors=lfactors)
+  })
+
+  ###################################################################################################
+  # BOOKMARKING
+
+  # NOTE (#DTState 1/3): stateSave must be enabled in the DataTable options in order for the
+  # corresponding input storing the state to be populated, but we don't actually want DT state to be
+  # restored whenever the same user reopens the app (we just want to save the state for bookmarking
+  # purposes), so by default, we override the callback restoring the state so that the stored state
+  # is ignored
+  session$userData$ltable_state <- ltable_state_default
+  onRestore(function(state) {
+    # NOTE (#DTState 2/3): only when restoring state from a bookmarked session do we allow the saved
+    # state to be applied to the DataTable
+    session$userData$ltable_state <- DT::JS(paste0(
+      "function(settings, data) {\n",
+      "Object.assign(data, ", toJSON(state$input$ltable_state, auto_unbox=TRUE), ");\n",
+      "}"
+    ))
+  })
+  onRestored(function(state) {
+    dataDrivenUIUpdate(session,
+      mode=list(NULL, state$input$mode),
+      division=list(NULL, state$input$division),
+      fx=list(NULL, state$input$fx),
+      fy=list(NULL, state$input$fy),
+      showfactors=list(NULL, state$input$showfactors)
+    )
   })
 
   ###################################################################################################
@@ -145,19 +188,22 @@ function(input, output, session) {
       spread(Factor, Loading) %>%
       inner_join(feat2desc, .)
   })
-  # NOTE: if a reactive function parameter needs to use a reactive value, wrap it in a function,
-  # it will be evaluated in an active reactive context
-  align <- function() {
-    align <- rep("?", ncol(ltable()))
-    align[c(1, 2)] <- c("r", "l")
-    align <- paste0(align, collapse="")
-  }
-  output$ltable <- DT::renderDataTable(
-    ltable(), filter="top", style="bootstrap", class=c("compact", "hover"), rownames=FALSE, selection="none",
-    options=list(
-      paging=FALSE,
-      bInfo=FALSE,
-      select=FALSE,
-      rowCallback=DT::JS(ltable_js)
-  ))
+  output$ltable <- DT::renderDataTable({
+    dt <- DT::datatable(
+                ltable(), filter="top", style="bootstrap", class=c("compact", "hover"),
+                rownames=FALSE, selection="none",
+                options=list(
+                  stateSave=TRUE,
+                  stateLoadParams=session$userData$ltable_state,
+                  paging=FALSE,
+                  bInfo=FALSE,
+                  select=FALSE,
+                  rowCallback=ltable_js
+                ))
+    # NOTE (#DTState 3/3): once a saved state from a bookmark has been used to restore the
+    # datatable, discard it, or else it'll come back to haunt the user (= get re-applied whenever
+    # the datatable generation code is re-run)
+    session$userData$ltable_state <- ltable_state_default
+    dt
+  })
 }
