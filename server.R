@@ -44,7 +44,6 @@ function(input, output, session) {
       gather(Factor, Loading, -Feature, factor_key=TRUE)
     lfactors <- levels(ldf$Factor)
     updateCheckboxGroupInput(session, "showfactors", choices=lfactors, selected=lfactors)
-    updateSelectInput(session, "sortfactor", choices=c(colnames(feat2desc), lfactors))
 
     list(fdf=fdf, ldf=ldf, lfactors=lfactors)
   })
