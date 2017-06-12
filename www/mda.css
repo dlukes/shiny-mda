@@ -28,3 +28,8 @@
   -moz-border-radius: 16px;
   border-radius: 16px;
 }
+
+/* the global filtering input can't be disabled separately, so let's at least hide it */
+.dataTables_wrapper > .row:nth-child(1) {
+  display: none;
+}

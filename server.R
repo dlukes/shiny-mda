@@ -157,7 +157,6 @@ function(input, output, session) {
     options=list(
       paging=FALSE,
       bInfo=FALSE,
-      searching=FALSE,
       select=FALSE,
       rowCallback=DT::JS(ltable_js)
   ))
