@@ -6,6 +6,7 @@ library(jsonlite)
 library(Cairo)  # For nicer ggplot2 output when deployed on Linux
 
 source("dim_graph.R")
+source("filterRange_override.R")
 
 palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 feat2desc <- read.csv("./conf/feat2desc.csv")
