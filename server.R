@@ -260,7 +260,7 @@ function(input, output, session) {
   refineSubcorpModal <- function(subcorp) {
     refined <- doSubcorpSelection(subcorp)
     removeModal()
-    subcorpModal(1, refined$meta, refined$selected)
+    subcorpModal(subcorp, refined$meta, refined$selected)
   }
 
   confirmSubcorp <- function(subcorp) {
