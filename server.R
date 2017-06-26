@@ -231,6 +231,8 @@ function(input, output, session) {
       title=paste("Subcorpus", subcorp),
       size="l",
       span("Specify subcorpus using metadata categories:"),
+      br(),
+      br(),
       do.call(tabsetPanel, categories),
       footer = tagList(
         modalButton("Cancel"),
@@ -267,7 +269,7 @@ function(input, output, session) {
     meta <- confirmed$meta
     catList <- lapply(names(selected), function(n) {
       tagList(tags$li(
-        tags$b(paste(n, ": ", collapse="")), paste(selected[[n]], collapse=", ")))
+        tags$b(paste0(n, ": ", collapse="")), paste(selected[[n]], collapse=", ")))
     })
     catList <- do.call(tags$ul, catList)
     output[[paste0("descSubcorp", subcorp)]] <- renderUI(catList)

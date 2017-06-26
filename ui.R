@@ -77,10 +77,20 @@ function(request) { fluidPage(
         ),
         tabPanel(
           "GenreDiff",
-          h4("Subcorpus 1"),
-          uiOutput("descSubcorp1"),
-          h4("Subcorpus 2"),
-          uiOutput("descSubcorp2"),
+          fluidRow(
+            column(6,
+              conditionalPanel(condition="output.descSubcorp1",
+                h4("Subcorpus 1")
+              ),
+              uiOutput("descSubcorp1")
+            ),
+            column(6,
+              conditionalPanel(condition="output.descSubcorp2",
+                h4("Subcorpus 2")
+              ),
+              uiOutput("descSubcorp2")
+            )
+          ),
           plotOutput("genreDiffPlot")
         )
       )
