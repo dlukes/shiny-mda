@@ -216,15 +216,18 @@ function(input, output, session) {
 
   genreDiffVals <- reactiveValues(subcorp1=NULL, subcorp2=NULL)
 
-  subcorpModal <- function(subcorp, meta=globalMeta, selected=list()) {
+  subcorpModal <- function(subcorp, meta=globalMeta, selected=list(), force_include=FALSE) {
+    if (force_include) selected$include = "yes"
     categories <- colnames(meta) %>%
       discard(~ .x == "id") %>%
       map(function(colname) {
         tabPanel(
           colname,
-          checkboxGroupInput(paste0(colname, "CheckboxSubcorp", subcorp), "",
-                             choices=sort(unique(meta[[colname]])),
-                             selected=selected[[colname]])
+          checkboxGroupInput(
+            paste0(colname, "CheckboxSubcorp", subcorp), "",
+            choices=sort(unique(meta[[colname]])),
+            selected=selected[[colname]]
+          )
         )
       })
     modalDialog(
@@ -277,8 +280,8 @@ function(input, output, session) {
     removeModal()
   }
 
-  observeEvent(input$subcorp1, showModal(subcorpModal(1)))
-  observeEvent(input$subcorp2, showModal(subcorpModal(2)))
+  observeEvent(input$subcorp1, showModal(subcorpModal(1, force_include=TRUE)))
+  observeEvent(input$subcorp2, showModal(subcorpModal(2, force_include=TRUE)))
   observeEvent(input$refineSubcorpSelection1, showModal(refineSubcorpModal(1)))
   observeEvent(input$refineSubcorpSelection2, showModal(refineSubcorpModal(2)))
   observeEvent(input$okSubcorp1, confirmSubcorp(1))
