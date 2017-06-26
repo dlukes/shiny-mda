@@ -17,3 +17,10 @@ whereas with the callback, it's done in just one pass.)
 
 See if built-in datatable column range filters can be made to filter outer
 ranges instead of inner ranges.
+
+# Global ggplot theme...?
+
+The default theme can be overridden with `theme_set(theme_bw(base_size=24))`,
+so maybe do that instead of adding `theme_bw()` manually to each plot? On the
+other hand, some plots use slightly different themes, base sizes etc. on
+purpose, so maybe not.

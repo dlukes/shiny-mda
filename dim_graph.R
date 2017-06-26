@@ -39,7 +39,7 @@ DimDraw <- function(data, factor.name = "GLS1", low.perc = 0.3, up.perc = 0.7, c
   data.melt.sel$CAT = factor(data.melt.sel$CAT, levels = selected$CAT)
   data.melt.sel$Desc = factor(data.melt.sel$Desc, levels = addDesc(selected$CAT))
   ggplot(data.melt.sel, aes(x = CAT, y = value)) +
-    geom_boxplot(aes(fill = CAT)) + theme_bw(base_size = 16) +
+    geom_boxplot(aes(fill = CAT)) +
     labs(x = "Metadata", y = "Factor value", title = paste("Scores for", factor.name)) +
     scale_fill_manual(
                      breaks = selected$CAT,

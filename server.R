@@ -1,4 +1,5 @@
 library(ggplot2)
+library(purrr)
 library(tidyr)
 library(dplyr)
 library(readr)
@@ -6,10 +7,13 @@ library(jsonlite)
 library(Cairo)  # For nicer ggplot2 output when deployed on Linux
 
 source("dim_graph.R")
+source("genrediff.R")
 source("filterRange_override.R")
 
 palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+theme_set(theme_bw(base_size=18))
 feat2desc <- read.csv("./conf/feat2desc.csv")
+globalMeta <- read_delim("./conf/koditex-metadata.csv", delim="\t")
 ltable_js <- DT::JS(read_file("./www/loadingsTable.js"))
 ltable_state_default <- DT::JS("function(settings, data) { return false; }")
 
@@ -111,7 +115,6 @@ function(input, output, session) {
     ggplot(filtered, aes_string(fx, fy, color="DIVISION")) +
       geom_point(aes_string(fx, fy), transform(fdf, MODE=NULL), color="grey", alpha=.2) +
       geom_point(aes_string(shape="MODE"), alpha=.4, size=5) +
-      theme_bw() +
       scale_color_manual(values=palette, drop=FALSE) +
       scale_shape_discrete(drop=FALSE) +
       # coord_fixed seems to break location reporting for click interaction...?
@@ -206,5 +209,87 @@ function(input, output, session) {
     # the datatable generation code is re-run)
     session$userData$ltable_state <- ltable_state_default
     dt
+  })
+
+  ###################################################################################################
+  # GENREDIFF
+
+  genreDiffVals <- reactiveValues(subcorp1=NULL, subcorp2=NULL)
+
+  subcorpModal <- function(subcorp, meta=globalMeta, selected=list()) {
+    categories <- colnames(meta) %>%
+      discard(~ .x == "id") %>%
+      map(function(colname) {
+        tabPanel(
+          colname,
+          checkboxGroupInput(paste0(colname, "CheckboxSubcorp", subcorp), "",
+                             choices=sort(unique(meta[[colname]])),
+                             selected=selected[[colname]])
+        )
+      })
+    modalDialog(
+      title=paste("Subcorpus", subcorp),
+      size="l",
+      span("Specify subcorpus using metadata categories:"),
+      do.call(tabsetPanel, categories),
+      footer = tagList(
+        modalButton("Cancel"),
+        actionButton(paste0("refineSubcorpSelection", subcorp), "Refine Selection"),
+        actionButton(paste0("okSubcorp", subcorp), "OK")
+      )
+    )
+  }
+
+  doSubcorpSelection <- function(subcorp) {
+    meta <- globalMeta
+    chboxes <- grep(paste0("CheckboxSubcorp", subcorp), names(input), value=TRUE)
+    selectedList <- list()
+    for (chbox in chboxes) {
+      selected <- input[[chbox]]
+      if (!is.null(selected)) {
+        colname <- gsub(paste0("CheckboxSubcorp", subcorp), "", chbox)
+        meta <- meta[meta[[colname]] %in% selected, ]
+        selectedList[[colname]] <- selected
+      }
+    }
+    list(meta=meta, selected=selectedList)
+  }
+
+  refineSubcorpModal <- function(subcorp) {
+    refined <- doSubcorpSelection(subcorp)
+    removeModal()
+    subcorpModal(1, refined$meta, refined$selectedList)
+  }
+
+  confirmSubcorp <- function(subcorp) {
+    confirmed <- doSubcorpSelection(subcorp)
+    selected <- confirmed$selected
+    meta <- confirmed$meta
+    catList <- lapply(names(selected), function(n) {
+      tagList(tags$li(
+        tags$b(paste(n, ": ", collapse="")), paste(selected[[n]], collapse=", ")))
+    })
+    catList <- do.call(tags$ul, catList)
+    output[[paste0("descSubcorp", subcorp)]] <- renderUI(catList)
+    genreDiffVals[[paste0("subcorp", subcorp)]] <- meta$id
+    removeModal()
+  }
+
+  observeEvent(input$subcorp1, showModal(subcorpModal(1)))
+  observeEvent(input$subcorp2, showModal(subcorpModal(2)))
+  observeEvent(input$refineSubcorpSelection1, showModal(refineSubcorpModal(1)))
+  observeEvent(input$refineSubcorpSelection2, showModal(refineSubcorpModal(2)))
+  observeEvent(input$okSubcorp1, confirmSubcorp(1))
+  observeEvent(input$okSubcorp2, confirmSubcorp(2))
+  observe({
+    subcorp1 <- genreDiffVals$subcorp1
+    subcorp2 <- genreDiffVals$subcorp2
+    output$genreDiffPlot <- renderPlot({
+      shiny::validate(
+        need(subcorp1, "Please specify subcorpus 1!"),
+        need(subcorp2, "Please specify subcorpus 2!")
+      )
+      genreDiff(data()$fdf, subcorp1, subcorp2)
+    })
   })
 }

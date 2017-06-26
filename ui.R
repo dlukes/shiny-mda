@@ -37,6 +37,12 @@ function(request) { fluidPage(
           sliderInput("thresh", "Global thresholds:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
         ),
         checkboxGroupInput("showfactors", "Show factors:", choices=c(), width="100%")
+      ),
+      conditionalPanel(condition="input.tabsetPanel == 'GenreDiff'",
+        actionButton("subcorp1", "Specify Subcorpus 1"),
+        br(),
+        br(),
+        actionButton("subcorp2", "Specify Subcorpus 2")
       )
     ),
 
@@ -68,6 +74,14 @@ function(request) { fluidPage(
         tabPanel(
           "Loadings Table",
           DT::dataTableOutput("ltable")
+        ),
+        tabPanel(
+          "GenreDiff",
+          h4("Subcorpus 1"),
+          uiOutput("descSubcorp1"),
+          h4("Subcorpus 2"),
+          uiOutput("descSubcorp2"),
+          plotOutput("genreDiffPlot")
         )
       )
     )
