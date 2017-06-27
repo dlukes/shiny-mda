@@ -1,14 +1,12 @@
-library(ggplot2)
-library(purrr)
-library(tidyr)
-library(dplyr)
-library(readr)
+source("dim_graph.R", local=TRUE)
+source("genrediff.R", local=TRUE)
+source("filterRange_override.R", local=TRUE)
+
 library(jsonlite)
 library(Cairo)  # For nicer ggplot2 output when deployed on Linux
 
-source("dim_graph.R")
-source("genrediff.R")
-source("filterRange_override.R")
+# load tidyverse last to make sure it overrides all conflicting function names
+library(tidyverse)
 
 palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 theme_set(theme_bw(base_size=18))
