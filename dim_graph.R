@@ -15,19 +15,25 @@ DimDraw <- function(data, factor.name = "GLS1", low.perc = 0.3, up.perc = 0.7, c
   data$CAT = paste(data$DIVISION, data$SUPERCLASS, data$CLASS, sep="-")
   data$Desc = addDesc(data$CAT)
   data.q = quantile(data[[factor.name]], c(low.perc, up.perc))
+  q1 = data.q[1]
+  q2 = data.q[2]
   data.melt = melt(data[c(factor.name, "CAT", "Desc")])
   data.melt$CAT = as.factor(data.melt$CAT)
   data.melt$Desc = as.factor(data.melt$Desc)
+
   selected = data.frame()
   selected.i = 1
+  below.zero = 0
   for (i in names(table(data.melt$CAT))) {
-    if (median(data.melt[ data.melt$CAT == i,]$value) < data.q[1] |
-        median(data.melt[ data.melt$CAT == i,]$value) > data.q[2]) {
+    med = median(data.melt[ data.melt$CAT == i,]$value)
+    if (med < q1 | med > q2) {
       selected[selected.i,1] = i
       selected[selected.i,2] = median(data.melt[ data.melt$CAT == i,]$value)
       selected.i = selected.i + 1
+      below.zero = below.zero + (med < q1)
     }
   }
+
   colnames(selected) = c("CAT", "Median")
   selected = selected[ order(selected$Median), ]
   # print(selected)
@@ -38,8 +44,9 @@ DimDraw <- function(data, factor.name = "GLS1", low.perc = 0.3, up.perc = 0.7, c
   data.melt.sel$Desc = droplevels(data.melt.sel$Desc)
   data.melt.sel$CAT = factor(data.melt.sel$CAT, levels = selected$CAT)
   data.melt.sel$Desc = factor(data.melt.sel$Desc, levels = addDesc(selected$CAT))
-  ggplot(data.melt.sel, aes(x = CAT, y = value)) +
+  plot = ggplot(data.melt.sel, aes(x = CAT, y = value)) +
     geom_boxplot(aes(fill = CAT)) +
+    # geom_hline(yintercept = 0) +
     labs(x = "Metadata", y = "Factor value", title = paste("Scores for", factor.name)) +
     scale_fill_manual(
                      breaks = selected$CAT,
@@ -47,6 +54,10 @@ DimDraw <- function(data, factor.name = "GLS1", low.perc = 0.3, up.perc = 0.7, c
                      values = col.palette,
                      name = "Text categories") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  if (below.zero > 0) {
+    plot = plot + geom_vline(xintercept = below.zero + .5)
+  }
+  plot
 }
 
 addDesc <- function(cat) {
