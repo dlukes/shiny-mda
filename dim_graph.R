@@ -61,7 +61,7 @@ DimDraw <- function(data, factor.name = "GLS1", low.perc = 0.3, up.perc = 0.7, c
                      name = "Text categories") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   if (below.zero > 0) {
-    plot = plot + geom_vline(xintercept = below.zero + .5)
+    plot = plot + geom_vline(xintercept = below.zero + .5, linetype = "dotted")
   }
   plot
 }
