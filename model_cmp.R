@@ -55,6 +55,6 @@ ModelCmp <- function(ldf1, fdf1, ldf2, fdf2, modelName1, modelName2) {
     scale_fill_gradient2(low = muted("red"), mid = "white", high = muted("blue"),
                          midpoint = 0, limits = c(-1, 1)) +
     geom_text(aes(label = round(r, digits = 2))) +
-    labs(x = modelName1, y = modelName2, fill="Korelace") +
+    labs(x = modelName1, y = modelName2, fill="Correlation") +
     facet_grid(. ~ Type)
 }
