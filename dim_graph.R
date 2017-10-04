@@ -1,12 +1,7 @@
 # Usage example:
-# load("./results/2017-05-18.RData")
-# factors$X <- row.names(factors)
-# factors$DIVISION <- factor(
-#   factors$DIVISION,
-#   c("int", "nin", "mul", "uni", "fic", "nfc", "nmg", "pri"),
-#   c("spo-int", "spo-nin", "web-mul", "web-uni", "wri-fic", "wri-nfc", "wri-nmg", "wri-pri")
-# )
-# DimDraw(factors, factor.name = "GLS3", low.perc = 0.2, up.perc = 0.8)
+# source("load_data.R")
+# data <- loadData("results/2017-05-18.RData")
+# DimDraw(data$fdf, factor.name = "GLS3", low.perc = 0.2, up.perc = 0.8)
 
 library(reshape2)
 library(ggplot2)
