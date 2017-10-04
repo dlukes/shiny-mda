@@ -43,6 +43,9 @@ function(request) { fluidPage(
         br(),
         br(),
         actionButton("subcorp2", "Specify Subcorpus 2")
+      ),
+      conditionalPanel(condition="input.tabsetPanel == 'ModelCmp'",
+        selectInput("cmp_results", "Compare with:", choices=fresults, selected=fresults[2])
       )
     ),
 
@@ -92,6 +95,10 @@ function(request) { fluidPage(
             )
           ),
           plotOutput("genreDiffPlot")
+        ),
+        tabPanel(
+          "ModelCmp",
+          plotOutput("modelCmpPlot")
         )
       )
     )

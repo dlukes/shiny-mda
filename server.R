@@ -1,5 +1,7 @@
+source("load_data.R", local=TRUE)
 source("dim_graph.R", local=TRUE)
 source("genre_diff.R", local=TRUE)
+source("model_cmp.R", local=TRUE)
 source("filterRange_override.R", local=TRUE)
 
 library(jsonlite)
@@ -38,35 +40,21 @@ function(input, output, session) {
       # name <- input$rdata$name
     }
 
-    env <- new.env()
-    load(rdata, env)
-    env <- as.list(env)
-
-    fdf <- env$factors
-    fdf$X <- row.names(fdf)
-    ffactors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(fdf), value=TRUE, invert=TRUE)
-    fdf$DIVISION <- factor(
-      fdf$DIVISION,
-      c("int", "nin", "mul", "uni", "fic", "nfc", "nmg", "pri"),
-      c("spo-int", "spo-nin", "web-mul", "web-uni", "wri-fic", "wri-nfc", "wri-nmg", "wri-pri")
-    )
-    modes <- levels(fdf$MODE)
-    divisions <- levels(fdf$DIVISION)
-
-    ldf <- unclass(env$load)
-    ldf <- data.frame(Feature=row.names(ldf), ldf) %>%
-      gather(Factor, Loading, -Feature, factor_key=TRUE)
-    lfactors <- levels(ldf$Factor)
+    ans <- loadData(rdata)
 
     dataDrivenUIUpdate(session,
-      mode=list(modes, modes),
-      division=list(divisions, NULL),
-      fx=list(ffactors, ffactors[1]),
-      fy=list(ffactors, ffactors[2]),
-      showfactors=list(lfactors, lfactors)
+      mode=list(ans$modes, ans$modes),
+      division=list(ans$divisions, NULL),
+      fx=list(ans$ffactors, ans$ffactors[1]),
+      fy=list(ans$ffactors, ans$ffactors[2]),
+      showfactors=list(ans$lfactors, ans$lfactors)
     )
 
-    list(fdf=fdf, ldf=ldf, lfactors=lfactors)
+    ans
+  })
+
+  cmpData <- reactive({
+    loadData(input$cmp_results)
   })
 
   ###################################################################################################
@@ -298,4 +286,14 @@ function(input, output, session) {
       genreDiff(data()$fdf, subcorp1, subcorp2)
     })
   })
+
+  ###################################################################################################
+  # MODEL COMPARISON
+
+  output$modelCmpPlot <- renderPlot({
+    mname1 <- tools::file_path_sans_ext(basename(input$results))
+    mname2 <- tools::file_path_sans_ext(basename(input$cmp_results))
+    ModelCmp(data()$ldf, data()$fdf, cmpData()$ldf, cmpData()$fdf, mname1, mname2)
+  })
+
 }
