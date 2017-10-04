@@ -43,7 +43,7 @@ to let me know if you feel otherwise and I'll fill in the details :)
 License
 -------
 
-Copyright © 2017--present [ÚČNK][cnc]/David Lukeš
+Copyright © 2017--present [ÚČNK][cnc]/David Lukeš, Václav Cvrček
 
 Distributed under the [GNU General Public License v3][gplv3]
 
