@@ -4,16 +4,6 @@ source("genre_diff.R", local=TRUE)
 source("model_cmp.R", local=TRUE)
 source("filterRange_override.R", local=TRUE)
 
-library(jsonlite)
-library(Cairo)  # For nicer ggplot2 output when deployed on Linux
-
-# load tidyverse last to make sure it overrides all conflicting function names
-library(tidyverse)
-
-palette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-theme_set(theme_bw(base_size=18))
-feat2desc <- read.csv("./conf/feat2desc.csv")
-globalMeta <- read_delim("./conf/koditex-metadata.csv", delim="\t")
 ltable_js <- DT::JS(read_file("./www/loadingsTable.js"))
 ltable_state_default <- DT::JS("function(settings, data) { return false; }")
 
@@ -28,6 +18,12 @@ dataDrivenUIUpdate <- function(session, mode, division, fx, fy, showfactors) {
 }
 
 function(input, output, session) {
+  ###################################################################################################
+  # INPUT DEBOUNCING
+
+  model_seq_d <- debounce(reactive(input$model_seq), 1000)
+  mmc_feat_set_d <- debounce(reactive(input$mmc_feat_set), 1000)
+
   ###################################################################################################
   # DATA
 
@@ -56,6 +52,20 @@ function(input, output, session) {
   cmpData <- reactive({
     loadData(input$cmp_results)
   })
+
+  multiData <- debounce(reactive({
+    model_seq <- model_seq_d()
+    if (length(model_seq) < 2) {
+      return(list())
+    }
+    models <- vector("list", length(model_seq))
+    names(models) <- tools::file_path_sans_ext(basename(model_seq))
+    for (i in 1:length(model_seq)) {
+      model_path <- model_seq[i]
+      models[[i]] <- loadData(model_path)
+    }
+    models
+  }), 1000)
 
   ###################################################################################################
   # BOOKMARKING
@@ -293,7 +303,24 @@ function(input, output, session) {
   output$modelCmpPlot <- renderPlot({
     mname1 <- tools::file_path_sans_ext(basename(input$results))
     mname2 <- tools::file_path_sans_ext(basename(input$cmp_results))
-    ModelCmp(data()$ldf, data()$fdf, cmpData()$ldf, cmpData()$fdf, mname1, mname2)
+    cmpFeats <- modelCmpFeatures(data()$ldf, cmpData()$ldf)
+    cmpChunks <- modelCmpChunks(data()$fdf, cmpData()$fdf)
+    plotModelCmp(bind_rows(cmpFeats, cmpChunks), mname1, mname2)
+  })
+
+  ###################################################################################################
+  # MULTI-MODEL COMPARISON
+
+  output$multiModelCmpPlot <- renderPlot({
+    shiny::validate(
+      need(
+        length(model_seq_d()) > 1,
+        "Please specify at least two models in the sequence!"
+      )
+    )
+    mmc_feat_set <- mmc_feat_set_d()
+    mmc <- multiModelCmp(multiData(), featSet=mmc_feat_set)
+    plotMultiModelCmp(mmc, featSet=length(mmc_feat_set) > 0)
   })
 
 }

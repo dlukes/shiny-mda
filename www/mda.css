@@ -18,6 +18,10 @@
   height: 90vh !important;
 }
 
+#multiModelCmpPlot {
+  height: 90vh !important;
+}
+
 #cql {
   font-family: monospace;
 }

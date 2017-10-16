@@ -1,6 +1,7 @@
 function(request) {
   fresults <- sort(list.files("results", pattern="\\.RData$", full.names=TRUE), decreasing=TRUE)
   names(fresults) <- tools::file_path_sans_ext(basename(fresults))
+  init_model_seq <- grep("2017-09-18_", fresults, value=TRUE)
 
   fluidPage(
     titlePanel("Shiny Happy MDA"),
@@ -10,11 +11,13 @@ function(request) {
       sidebarPanel(
         width=3,
         bookmarkButton(),
-        fileInput("rdata", "Upload your own data:", accept=".RData"),
-        selectInput("results", "Results:", choices=fresults, selected=fresults[1]),
-        conditionalPanel(condition="/^Factors/.test(input.tabsetPanel)",
-          selectInput("fx", "X axis:", choices=c()),
-          selectInput("fy", "Y axis:", choices=c())
+        conditionalPanel(condition="input.tabsetPanel != 'MultiModelCmp'",
+          fileInput("rdata", "Upload your own data:", accept=".RData"),
+          selectInput("results", "Results:", choices=fresults, selected=fresults[1]),
+          conditionalPanel(condition="/^Factors/.test(input.tabsetPanel)",
+            selectInput("fx", "X axis:", choices=c()),
+            selectInput("fy", "Y axis:", choices=c())
+          )
         ),
         conditionalPanel(condition="input.tabsetPanel == 'Factors 2-dim'",
           fluidRow(
@@ -47,6 +50,10 @@ function(request) {
         ),
         conditionalPanel(condition="input.tabsetPanel == 'ModelCmp'",
           selectInput("cmp_results", "Compare with:", choices=fresults, selected=fresults[2])
+        ),
+        conditionalPanel(condition="input.tabsetPanel == 'MultiModelCmp'",
+          selectizeInput("model_seq", "Sequence of models:", fresults, selected=init_model_seq, multiple=TRUE),
+          selectizeInput("mmc_feat_set", "Focus on features:", feat2desc$Feature, selected=NULL, multiple=TRUE)
         )
       ),
 
@@ -100,6 +107,10 @@ function(request) {
           tabPanel(
             "ModelCmp",
             plotOutput("modelCmpPlot")
+          ),
+          tabPanel(
+            "MultiModelCmp",
+            plotOutput("multiModelCmpPlot")
           )
         )
       )
