@@ -1,7 +1,7 @@
 function(request) {
-  fresults <- sort(list.files("results", pattern="\\.RData$", full.names=TRUE), decreasing=TRUE)
-  names(fresults) <- tools::file_path_sans_ext(basename(fresults))
-  init_model_seq <- grep("2017-09-18_", fresults, value=TRUE)
+  fresults <- lsResults()
+  fresults_names <- names(fresults)
+  init_model_seq <- grep("2017-09-18_", fresults_names, value=TRUE)
 
   fluidPage(
     titlePanel("Shiny Happy MDA"),
@@ -52,8 +52,15 @@ function(request) {
           selectInput("cmp_results", "Compare with:", choices=fresults, selected=fresults[2])
         ),
         conditionalPanel(condition="input.tabsetPanel == 'MultiModelCmp'",
-          selectizeInput("model_seq", "Sequence of models:", fresults, selected=init_model_seq, multiple=TRUE),
-          selectizeInput("mmc_feat_set", "Focus on features:", feat2desc$Feature, selected=NULL, multiple=TRUE)
+          selectizeInput("model_seq", "Sequence of models:", fresults_names, selected=init_model_seq, multiple=TRUE),
+          h4("Focus on features:"),
+          selectizeInput("mmc_feat_set", "Individual:", feat2desc$Feature, multiple=TRUE),
+          selectizeInput("mmc_feats_from_mod", "Correlated with model:", choices=fresults_names, multiple=TRUE),
+          selectizeInput("mmc_feats_from_dim", "Dimension:", choices=1:9, multiple=TRUE),
+          div(
+            class="outer-range-wrapper",
+            sliderInput("mmc_feats_thresh", "Threshold:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
+          )
         )
       ),
 

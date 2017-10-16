@@ -129,9 +129,9 @@ multiModelCmp <- function(models, featSet=NULL) {
     modelName1 <- modelNames[i]
     modelName2 <- modelNames[i+1]
     if (is.null(featSet)) {
-      modelCmp <- modelCmpFeatures(model1$ldf, model2$ldf)
+      modelCmp <- modelCmpFeatures(model1, model2)
     } else {
-      modelCmp <- modelCmpFeatSet(model1$ldf, model2$ldf, featSet)
+      modelCmp <- modelCmpFeatSet(model1, model2, featSet)
     }
     modelCmp$ModelName1 <- modelName1
     modelCmp$ModelName2 <- modelName2

@@ -23,6 +23,9 @@ function(input, output, session) {
 
   model_seq_d <- debounce(reactive(input$model_seq), 1000)
   mmc_feat_set_d <- debounce(reactive(input$mmc_feat_set), 1000)
+  mmc_feats_from_mod_d <- debounce(reactive(input$mmc_feats_from_mod), 1000)
+  mmc_feats_from_dim_d <- debounce(reactive(input$mmc_feats_from_dim), 1000)
+  mmc_feats_thresh_d <- debounce(reactive(input$mmc_feats_thresh), 1000)
 
   ###################################################################################################
   # DATA
@@ -53,19 +56,19 @@ function(input, output, session) {
     loadData(input$cmp_results)
   })
 
-  multiData <- debounce(reactive({
-    model_seq <- model_seq_d()
-    if (length(model_seq) < 2) {
-      return(list())
+  multiData <- reactivePoll(5000, session,
+    checkFunc=lsResults,
+    valueFunc=function() {
+      results <- lsResults()
+      models <- vector("list", length(results))
+      names(models) <- names(results)
+      for (i in 1:length(results)) {
+        model_path <- results[i]
+        models[[i]] <- loadData(model_path)$ldf
+      }
+      models
     }
-    models <- vector("list", length(model_seq))
-    names(models) <- tools::file_path_sans_ext(basename(model_seq))
-    for (i in 1:length(model_seq)) {
-      model_path <- model_seq[i]
-      models[[i]] <- loadData(model_path)
-    }
-    models
-  }), 1000)
+  )
 
   ###################################################################################################
   # BOOKMARKING
@@ -312,15 +315,30 @@ function(input, output, session) {
   # MULTI-MODEL COMPARISON
 
   output$multiModelCmpPlot <- renderPlot({
+    model_seq <- model_seq_d()
     shiny::validate(
       need(
-        length(model_seq_d()) > 1,
+        length(model_seq) > 1,
         "Please specify at least two models in the sequence!"
       )
     )
-    mmc_feat_set <- mmc_feat_set_d()
-    mmc <- multiModelCmp(multiData(), featSet=mmc_feat_set)
-    plotMultiModelCmp(mmc, featSet=length(mmc_feat_set) > 0)
+    multi_data <- multiData()
+    feats_from_mod <- mmc_feats_from_mod_d()
+    feats_from_dim <- mmc_feats_from_dim_d()
+    feat_set <- if (!is.null(feats_from_mod) && !is.null(feats_from_dim)) {
+      feats_thresh <- mmc_feats_thresh_d()
+      tmp <- bind_rows(multi_data[feats_from_mod]) %>%
+        filter(
+          grepl(sprintf("%s$", feats_from_dim), Factor) &
+            (Loading <= feats_thresh[1] | Loading >= feats_thresh[2])
+        )
+      unique(c(as.character(tmp$Feature), mmc_feat_set_d()))
+    } else {
+      mmc_feat_set_d()
+    }
+    models <- multi_data[model_seq]
+    mmc <- multiModelCmp(models, featSet=feat_set)
+    plotMultiModelCmp(mmc, featSet=length(feat_set) > 0)
   })
 
 }
