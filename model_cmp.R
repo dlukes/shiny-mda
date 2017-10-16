@@ -158,6 +158,7 @@ plotMultiModelCmp <- function(data, featSet=FALSE) {
       low=muted("red"), mid="white", high=muted("blue"), midpoint=0, limits=c(-1, 1)
     ) +
     scale_size_continuous(range=c(0, 1)) +
+    theme(panel.grid=element_blank()) +
     labs(x="Models", y="Dimensions", color=colorLabel) +
     guides(size="none", alpha="none")
 }
