@@ -7,6 +7,7 @@
 # ModelCmp(ref$ldf, ref$fdf, cmp$ldf, cmp$fdf, model1, model2)
 
 library(ggplot2)
+library(tidyr)
 library(dplyr)
 library(scales)
 
