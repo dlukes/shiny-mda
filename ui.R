@@ -59,7 +59,7 @@ function(request) {
           selectizeInput("mmc_feats_from_dim", "Dimension:", choices=1:9, multiple=TRUE),
           div(
             class="outer-range-wrapper",
-            sliderInput("mmc_feats_thresh", "Threshold:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
+            sliderInput("mmc_feats_thresh", "Loading threshold:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
           ),
           h4("Details table (only when focus specified):"),
           selectInput("mmc_dets_m1", "From model:", fresults_names, selected=init_model_seq[1]),
