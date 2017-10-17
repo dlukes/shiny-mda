@@ -64,10 +64,7 @@ function(request) {
           h4("Details table (only when focus specified):"),
           selectInput("mmc_dets_m1", "From model:", fresults_names, selected=init_model_seq[1]),
           selectInput("mmc_dets_m2", "To model:", fresults_names, selected=init_model_seq[2]),
-          div(
-            class="outer-range-wrapper",
-            sliderInput("mmc_dets_thresh", "Threshold:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
-          )
+          numericInput("mmc_dets_top", "Show only top loading products:", 20, min=0, step=1)
         )
       ),
 

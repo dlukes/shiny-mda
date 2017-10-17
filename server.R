@@ -348,17 +348,13 @@ function(input, output, session) {
 
   output$multiModelCmpDetails <- renderTable({
     details <- multiModelCmpReactive()$details
-    thresh <- input$mmc_dets_thresh
     m1 <- input$mmc_dets_m1
     m2 <- input$mmc_dets_m2
     if (nrow(details) > 0 && m1 %in% details$ModelName1 && m2 %in% details$ModelName2) {
       desc <- select(feat2desc, Feature, Description)
-      details <- filter(
-        details,
-        (LoadProd <= thresh[1] | LoadProd >= thresh[2])
-        & ModelName1 == m1
-        & ModelName2 == m2
-      ) %>%
+      details <- filter(details, ModelName1 == m1 & ModelName2 == m2) %>%
+        top_n(input$mmc_dets_top, abs(LoadProd)) %>%
+        arrange(Feature) %>%
         spread(Factors, LoadProd) %>%
         select(-ModelName1, -ModelName2) %>%
         left_join(desc) %>%
