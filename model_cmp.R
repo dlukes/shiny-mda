@@ -162,16 +162,13 @@ multiModelCmp <- function(models, featSet=NULL) {
 }
 
 plotMultiModelCmp <- function(data, featSet=FALSE) {
-  colorLabel <- if (featSet) {
-    "Mean point-\nwise product"
-  } else {
-    "Correlation"
-  }
+  colorLabel <- if (featSet) { "Mean point-\nwise product" } else { "Correlation" }
+  gradientLimits <- if (featSet) { NULL } else { c(-1, 1) }
   ggplot(data=data, aes(x=ModelName1, y=Model1)) +
     geom_segment(aes(xend=ModelName2, yend=Model2, size=abs(r) , color=r, alpha=abs(r))) +
     scale_x_discrete(drop=FALSE) +
     scale_color_gradient2(
-      low=muted("red"), mid="white", high=muted("blue"), midpoint=0, limits=c(-1, 1)
+      low=muted("red"), mid="white", high=muted("blue"), midpoint=0, limits=gradientLimits
     ) +
     scale_size_continuous(range=c(0, 1)) +
     theme(panel.grid=element_blank()) +
