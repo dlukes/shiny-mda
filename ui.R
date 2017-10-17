@@ -60,6 +60,13 @@ function(request) {
           div(
             class="outer-range-wrapper",
             sliderInput("mmc_feats_thresh", "Threshold:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
+          ),
+          h4("Details table (only when focus specified):"),
+          selectInput("mmc_dets_m1", "From model:", fresults_names, selected=init_model_seq[1]),
+          selectInput("mmc_dets_m2", "To model:", fresults_names, selected=init_model_seq[2]),
+          div(
+            class="outer-range-wrapper",
+            sliderInput("mmc_dets_thresh", "Threshold:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
           )
         )
       ),
@@ -117,7 +124,8 @@ function(request) {
           ),
           tabPanel(
             "MultiModelCmp",
-            plotOutput("multiModelCmpPlot")
+            plotOutput("multiModelCmpPlot"),
+            tableOutput("multiModelCmpDetails")
           )
         )
       )

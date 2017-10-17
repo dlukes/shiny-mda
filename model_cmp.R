@@ -88,9 +88,10 @@ modelCmpChunks <- function(fdf1, fdf2) {
 modelCmpFeatSet <- function(ldf1, ldf2, featSet) {
   # in this case, it's not really a correlation matrix, but let's keep the variable name anyway
   cormat = initCormat()
+  details = tibble(Feature=character(), Factors=character(), LoadProd=numeric())
   ldf1 <- filter(ldf1, Feature %in% featSet)
   ldf2 <- filter(ldf2, Feature %in% featSet)
-  for(f1 in levels(ldf1$Factor)) {
+  for (f1 in levels(ldf1$Factor)) {
     val1 = filter(ldf1, Factor == f1) %>% select(-Factor)
     val1$Feature = as.character(val1$Feature)
     for (f2 in levels(ldf2$Factor)) {
@@ -98,15 +99,20 @@ modelCmpFeatSet <- function(ldf1, ldf2, featSet) {
       val2$Feature = as.character(val2$Feature)
       values = inner_join(val1, val2, by="Feature")
       # not a correlation measure
-      rs = mean(values[,2] * values[,3])
+      pw_prod = values[,2] * values[,3]
+      rs = mean(pw_prod)
       tmp = data.frame(Type = "Features", Model1 = f1, Model2 = f2, r = rs)
       tmp$Type = as.character(tmp$Type)
       tmp$Model1 = as.character(tmp$Model1)
       tmp$Model2 = as.character(tmp$Model2)
       cormat = bind_rows(cormat, tmp)
+      details <- bind_rows(
+        details,
+        tibble(Feature=values$Feature, Factors=sprintf("%s→%s", f1, f2), LoadProd=pw_prod)
+      )
     }
   }
-  cormat
+  list(cormat=cormat, details=details)
 }
 
 plotModelCmp <- function(cormat, modelName1, modelName2) {
@@ -123,6 +129,7 @@ multiModelCmp <- function(models, featSet=NULL) {
   numCmps <- length(models) - 1
   modelNames <- names(models)
   modelCmps <- vector("list", numCmps)
+  detailsList <- vector("list", numCmps)
   for (i in 1:numCmps) {
     model1 <- models[[i]]
     model2 <- models[[i+1]]
@@ -130,19 +137,28 @@ multiModelCmp <- function(models, featSet=NULL) {
     modelName2 <- modelNames[i+1]
     if (is.null(featSet)) {
       modelCmp <- modelCmpFeatures(model1, model2)
+      details <- NULL
     } else {
-      modelCmp <- modelCmpFeatSet(model1, model2, featSet)
+      res <- modelCmpFeatSet(model1, model2, featSet)
+      modelCmp <- res$cormat
+      details <- res$details
     }
     modelCmp$ModelName1 <- modelName1
     modelCmp$ModelName2 <- modelName2
+    if (!is.null(details)) {
+      details$ModelName1 <- modelName1
+      details$ModelName2 <- modelName2
+    }
     modelCmps[[i]] <- modelCmp
+    detailsList[[i]] <- details
   }
-  df <- bind_rows(modelCmps)
-  df$Model1 <- gsub("\\D", "", df$Model1)
-  df$Model2 <- gsub("\\D", "", df$Model2)
-  df$ModelName1 <- factor(df$ModelName1, levels=modelNames)
-  df$ModelName2 <- factor(df$ModelName2, levels=modelNames)
-  df
+  modelDf <- bind_rows(modelCmps)
+  modelDf$Model1 <- gsub("\\D", "", modelDf$Model1)
+  modelDf$Model2 <- gsub("\\D", "", modelDf$Model2)
+  modelDf$ModelName1 <- factor(modelDf$ModelName1, levels=modelNames)
+  modelDf$ModelName2 <- factor(modelDf$ModelName2, levels=modelNames)
+  detailsDf <- bind_rows(detailsList)
+  list(models=modelDf, details=detailsDf)
 }
 
 plotMultiModelCmp <- function(data, featSet=FALSE) {

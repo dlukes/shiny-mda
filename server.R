@@ -314,7 +314,7 @@ function(input, output, session) {
   ###################################################################################################
   # MULTI-MODEL COMPARISON
 
-  output$multiModelCmpPlot <- renderPlot({
+  multiModelCmpReactive <- reactive({
     model_seq <- model_seq_d()
     shiny::validate(
       need(
@@ -337,8 +337,28 @@ function(input, output, session) {
       mmc_feat_set_d()
     }
     models <- multi_data[model_seq]
-    mmc <- multiModelCmp(models, featSet=feat_set)
-    plotMultiModelCmp(mmc, featSet=length(feat_set) > 0)
+    res <- multiModelCmp(models, featSet=feat_set)
+    list(mmc=res$models, feat_set=length(feat_set) > 0, details=res$details)
   })
 
+  output$multiModelCmpPlot <- renderPlot({
+    mmc <- multiModelCmpReactive()
+    plotMultiModelCmp(mmc$mmc, featSet=mmc$feat_set)
+  })
+
+  output$multiModelCmpDetails <- renderTable({
+    details <- multiModelCmpReactive()$details
+    thresh <- input$mmc_dets_thresh
+    if (nrow(details) > 0) {
+      details <- filter(
+        details,
+        (LoadProd <= thresh[1] | LoadProd >= thresh[2])
+        & ModelName1 == input$mmc_dets_m1
+        & ModelName2 == input$mmc_dets_m2
+      ) %>%
+        spread(Factors, LoadProd) %>%
+        select(-ModelName1, -ModelName2)
+    }
+    details
+  })
 }
