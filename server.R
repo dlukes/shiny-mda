@@ -3,6 +3,7 @@ source("dim_graph.R", local=TRUE)
 source("genre_diff.R", local=TRUE)
 source("model_cmp.R", local=TRUE)
 source("filterRange_override.R", local=TRUE)
+source("correlated_feats.R", local=TRUE)
 
 ltable_js <- DT::JS(read_file("./www/loadingsTable.js"))
 ltable_state_default <- DT::JS("function(settings, data) { return false; }")
@@ -190,7 +191,8 @@ function(input, output, session) {
     thresh <- input$thresh
     showfactors <- input$showfactors
     req(thresh, showfactors)
-    filter(data$ldf, (Loading < thresh[1] | Loading > thresh[2]) & Factor %in% showfactors) %>%
+    ldf <- add_correlated_feats(data$ldf, data$orig, input$cor_feat_thresh)
+    filter(ldf, (Loading < thresh[1] | Loading > thresh[2]) & Factor %in% showfactors) %>%
       spread(Factor, Loading) %>%
       inner_join(feat2desc, .)
   })

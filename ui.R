@@ -43,6 +43,10 @@ function(request) {
               class="outer-range-wrapper",
               sliderInput("thresh", "Global thresholds:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
             ),
+            div(
+              class="outer-range-wrapper",
+              sliderInput("cor_feat_thresh", "Correlated feature thresholds:", min=-1, max=1, step=.01, value=c(-.95, .95), width="100%")
+            ),
             checkboxGroupInput("showfactors", "Show factors:", choices=c(), width="100%")
           ),
           conditionalPanel(condition="input.tabsetPanel == 'GenreDiff'",
