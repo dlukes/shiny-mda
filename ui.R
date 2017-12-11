@@ -10,7 +10,7 @@ function(request) {
     sidebarLayout(
       sidebarPanel(
         id="controls-outer",
-        width=3,
+        width=2,
         div(
           id="controls-inner",
           bookmarkButton(),
@@ -78,7 +78,7 @@ function(request) {
 
       mainPanel(
         id="mainPanel",
-        width=9,
+        width=10,
         tabsetPanel(
           id="tabsetPanel",
           tabPanel(
