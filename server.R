@@ -223,8 +223,8 @@ function(input, output, session) {
   subcorpModal <- function(subcorp, meta=globalMeta, selected=list(), force_include=FALSE) {
     if (force_include) selected$include = "yes"
     categories <- colnames(meta) %>%
-      discard(~ .x == "id") %>%
-      map(function(colname) {
+      purrr::discard(~ .x == "id") %>%
+      purrr::map(function(colname) {
         tabPanel(
           colname,
           checkboxGroupInput(
