@@ -4,7 +4,7 @@ function(request) {
   init_model_seq <- grep("2017-09-18_", fresults_names, value=TRUE)
 
   fluidPage(
-    titlePanel("Shiny Happy MDA"),
+    titlePanel("MDAvis"),
     tags$head(tags$link(rel="stylesheet", type="text/css", href="mda.css")),
 
     sidebarLayout(
