@@ -105,7 +105,10 @@ function(input, output, session) {
   ranges <- reactiveValues(x=NULL, y=NULL)
 
   output$fplot <- renderPlot({
-    fdf <- data()$fdf
+    data <- data()
+    fdf <- data$fdf
+    ffactors <- data$ffactors
+    plot_type <- input$distPlotType
     fx <- input$fx
     fy <- input$fy
     mode <- input$mode
@@ -115,13 +118,30 @@ function(input, output, session) {
     # should be checked together: they constitute a single requirement for input
     req(fx, fy, c(mode, division))
     filtered <- filter(fdf, MODE %in% mode | DIVISION %in% division)
-    ggplot(filtered, aes_string(fx, fy, color="DIVISION")) +
-      geom_point(aes_string(fx, fy), transform(fdf, MODE=NULL), color="grey", alpha=.2) +
-      geom_point(aes_string(shape="MODE"), alpha=.4, size=5) +
-      scale_color_manual(values=palette, drop=FALSE) +
-      scale_shape_discrete(drop=FALSE) +
-      # coord_fixed seems to break location reporting for click interaction...?
-      coord_cartesian(xlim=ranges$x, ylim=ranges$y)
+    if (plot_type == "scatter") {
+      plot <- ggplot(filtered, aes_string(fx, fy, color="DIVISION")) +
+        geom_point(aes_string(fx, fy), transform(fdf, MODE=NULL), color="grey", alpha=.2) +
+        geom_point(aes_string(shape="MODE"), alpha=.4, size=5) +
+        scale_shape_discrete(drop=FALSE) +
+        # coord_fixed seems to break location reporting for click interaction...?
+        coord_cartesian(xlim=ranges$x, ylim=ranges$y)
+    } else {
+      gathered <- gather(filtered, "FACTOR", "SCORE", ffactors) %>%
+        filter(FACTOR %in% c(fx, fy))
+      if (plot_type == "density") {
+        plot <- ggplot(gathered, aes(SCORE, color=DIVISION, linetype=MODE)) +
+          geom_density()
+      } else if (plot_type == "violin") {
+        plot <- ggplot(gathered, aes(DIVISION, SCORE, color=DIVISION, linetype=MODE)) +
+          geom_violin()
+      } else if (plot_type == "box") {
+        plot <- ggplot(gathered, aes(DIVISION, SCORE, color=DIVISION, linetype=MODE)) +
+          geom_boxplot()
+      }
+      plot <- plot + facet_wrap(~FACTOR, ncol=1) +
+        scale_linetype_manual(values=c("solid", "longdash", "dotted"), drop=FALSE)
+    }
+    plot + scale_color_manual(values=palette, drop=FALSE)
   })
 
   # When a double-click happens, check if there's a brush on the plot.

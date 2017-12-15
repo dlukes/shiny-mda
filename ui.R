@@ -23,6 +23,7 @@ function(request) {
             )
           ),
           conditionalPanel(condition="input.tabsetPanel == 'Factors 2-dim'",
+            selectInput("distPlotType", "Plot type:", c("scatter", "density", "violin", "box")),
             fluidRow(
               column(6, checkboxGroupInput("mode", "Mode:", choices=c())),
               column(6, checkboxGroupInput("division", "Division:", choices=c()))
