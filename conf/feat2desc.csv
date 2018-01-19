@@ -49,6 +49,7 @@ LAT,latinské citátové výrazy,lexikon,
 GENL,genderové markery - lexikon,lexikon,substantiva
 ADN,jmenné tvary adjektiv,morfologie,adjektiva
 AKK,akuzativ,morfologie,nouns
+NAKK,nominativ + akuzativ,morfologie,nouns
 DAT,dativ,morfologie,nouns
 GEN,genitiv,morfologie,nouns
 INS,instrumentál,morfologie,nouns
@@ -132,6 +133,7 @@ PN,jmenný přísudek subst.,syntax,verba
 INFK,infinitiv kondenzační,syntax,verba
 CIR,okolnostní věty,syntax,věta
 CIR3,VV přípustkové a další adverzativní,syntax,věta
+CIR124,"VV příčinné, podmínkové, okolnostní další",syntax,věta
 CIR2,VV podmínkové,syntax,věta
 CIR1,VV příčinné,syntax,věta
 CIR4,VV okolnostní další,syntax,věta
