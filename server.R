@@ -215,7 +215,7 @@ function(input, output, session) {
     ldf$Loading <- round(ldf$Loading, 2)
     filter(ldf, (Loading <= thresh[1] | Loading >= thresh[2]) & Factor %in% showfactors) %>%
       spread(Factor, Loading) %>%
-      inner_join(feat2desc, .)
+      right_join(feat2desc, .)
   })
   output$ltable <- DT::renderDataTable({
     dt <- DT::datatable(
