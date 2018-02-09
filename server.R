@@ -212,7 +212,8 @@ function(input, output, session) {
     showfactors <- input$showfactors
     req(thresh, showfactors)
     ldf <- add_correlated_feats(data$ldf, data$orig, input$cor_feat_thresh)
-    filter(ldf, (Loading < thresh[1] | Loading > thresh[2]) & Factor %in% showfactors) %>%
+    ldf$Loading <- round(ldf$Loading, 2)
+    filter(ldf, (Loading <= thresh[1] | Loading >= thresh[2]) & Factor %in% showfactors) %>%
       spread(Factor, Loading) %>%
       inner_join(feat2desc, .)
   })
