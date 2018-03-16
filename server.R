@@ -122,7 +122,7 @@ function(input, output, session) {
       plot <- ggplot(filtered, aes_string(fx, fy, color="DIVISION")) +
         geom_point(aes_string(fx, fy), transform(fdf, MODE=NULL), color="grey", alpha=.2) +
         geom_point(aes_string(shape="MODE"), alpha=.4, size=5) +
-        scale_shape_discrete(drop=FALSE) +
+        scale_shape_manual(drop=FALSE, values=shapes) +
         # coord_fixed seems to break location reporting for click interaction...?
         coord_cartesian(xlim=ranges$x, ylim=ranges$y)
     } else {
@@ -139,7 +139,7 @@ function(input, output, session) {
           geom_boxplot()
       }
       plot <- plot + facet_wrap(~FACTOR, ncol=1) +
-        scale_linetype_manual(values=c("solid", "longdash", "dotted"), drop=FALSE)
+        scale_linetype_manual(values=lines, drop=FALSE)
     }
     plot + scale_color_manual(values=palette, drop=FALSE)
   })

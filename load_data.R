@@ -6,13 +6,18 @@ loadData <- function(path) {
   env <- as.list(env)
 
   fdf <- env$factors
+  # expand division label to make it more intuitive
+  fdf$DIVISION <- paste(as.character(fdf$MODE), as.character(fdf$DIVISION), sep="-")
+  # coerce metadata to factors
+  fdf$MODE <- as.factor(fdf$MODE)
+  fdf$DIVISION <- as.factor(fdf$DIVISION)
+  fdf$SUPERCLASS <- as.factor(fdf$SUPERCLASS)
+  fdf$CLASS <- as.factor(fdf$CLASS)
+  # reorder levels so that cpact* goes last to keep original visuals
+  fdf$MODE <- cpact_levels_last(fdf$MODE)
+  fdf$DIVISION <- cpact_levels_last(fdf$DIVISION)
   fdf$X <- row.names(fdf)
   ffactors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(fdf), value=TRUE, invert=TRUE)
-  fdf$DIVISION <- factor(
-    fdf$DIVISION,
-    c("int", "nin", "mul", "uni", "fic", "nfc", "nmg", "pri"),
-    c("spo-int", "spo-nin", "web-mul", "web-uni", "wri-fic", "wri-nfc", "wri-nmg", "wri-pri")
-  )
   modes <- levels(fdf$MODE)
   divisions <- levels(fdf$DIVISION)
 
@@ -22,4 +27,11 @@ loadData <- function(path) {
   lfactors <- levels(ldf$Factor)
 
   list(ldf=ldf, fdf=fdf, lfactors=lfactors, ffactors=ffactors, modes=modes, divisions=divisions, orig=env$res.data)
+}
+
+cpact_levels_last <- function(fct) {
+  lvls <- levels(fct)
+  cpact <- grep("cpact", lvls, value=TRUE)
+  non_cpact <- grep("cpact", lvls, value=TRUE, invert=TRUE)
+  factor(fct, levels=c(non_cpact, cpact))
 }
