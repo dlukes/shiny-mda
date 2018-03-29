@@ -118,13 +118,19 @@ function(input, output, session) {
     # should be checked together: they constitute a single requirement for input
     req(fx, fy, c(mode, division))
     filtered <- filter(fdf, MODE %in% mode | DIVISION %in% division)
-    if (plot_type == "scatter") {
+    if (plot_type %in% c("scatter", "ellipse", "density2d")) {
       plot <- ggplot(filtered, aes_string(fx, fy, color="DIVISION")) +
         geom_point(aes_string(fx, fy), transform(fdf, MODE=NULL), color="grey", alpha=.2) +
-        geom_point(aes_string(shape="MODE"), alpha=.4, size=5) +
-        scale_shape_manual(drop=FALSE, values=shapes) +
-        # coord_fixed seems to break location reporting for click interaction...?
-        coord_cartesian(xlim=ranges$x, ylim=ranges$y)
+          scale_shape_manual(drop=FALSE, values=shapes)
+      if (plot_type == "scatter") {
+        plot <- plot + geom_point(aes_string(shape="MODE"), alpha=.4, size=5)
+      } else if (plot_type == "ellipse") {
+        plot <- plot + stat_ellipse()
+      } else if (plot_type == "density2d") {
+        plot <- plot + stat_density2d()
+      }
+      # coord_fixed seems to break location reporting for click interaction...?
+      plot <- plot + coord_cartesian(xlim=ranges$x, ylim=ranges$y)
     } else {
       gathered <- gather(filtered, "FACTOR", "SCORE", ffactors) %>%
         filter(FACTOR %in% c(fx, fy))
