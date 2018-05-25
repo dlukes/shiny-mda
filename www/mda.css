@@ -26,6 +26,10 @@ body {
   height: 90vh !important;
 }
 
+#featCritPlot {
+  height: 90vh !important;
+}
+
 #cql {
   font-family: monospace;
 }

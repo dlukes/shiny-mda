@@ -4,6 +4,7 @@ source("genre_diff.R", local=TRUE)
 source("model_cmp.R", local=TRUE)
 source("filterRange_override.R", local=TRUE)
 source("correlated_feats.R", local=TRUE)
+source("feat_crit.R", local=TRUE)
 
 ltable_js <- DT::JS(read_file("./www/loadingsTable.js"))
 ltable_state_default <- DT::JS("function(settings, data) { return false; }")
@@ -15,6 +16,7 @@ dataDrivenUIUpdate <- function(session, mode, division, fx, fy, showfactors) {
   updateCheckboxGroupInput(session, "division", choices=division[[1]], selected=division[[2]])
   updateSelectInput(session, "fx", choices=fx[[1]], selected=fx[[2]])
   updateSelectInput(session, "fy", choices=fy[[1]], selected=fy[[2]])
+  updateSelectInput(session, "feat_crit_dim", choices=fx[[1]], selected=fx[[2]])
   updateCheckboxGroupInput(session, "showfactors", choices=showfactors[[1]], selected=showfactors[[2]])
 }
 
@@ -392,5 +394,12 @@ function(input, output, session) {
       details <- tibble()
     }
     details
+  })
+
+  ###################################################################################################
+  # FEATURE CRITIC
+
+  output$featCritPlot <- renderPlot({
+    plotFeatCrit(data()$feat_crit_table, input$feat_crit_dim)
   })
 }

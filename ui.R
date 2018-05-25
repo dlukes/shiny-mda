@@ -75,6 +75,9 @@ function(request) {
             selectInput("mmc_dets_m1", "From model:", fresults_names, selected=init_model_seq[1]),
             selectInput("mmc_dets_m2", "To model:", fresults_names, selected=init_model_seq[2]),
             numericInput("mmc_dets_top", "Show only top loading products:", 20, min=0, step=1)
+          ),
+          conditionalPanel(condition="input.tabsetPanel == 'Feature Critic'",
+            selectInput("feat_crit_dim", "Dimension:", choices=c())
           )
         )
       ),
@@ -134,6 +137,10 @@ function(request) {
             "MultiModelCmp",
             plotOutput("multiModelCmpPlot"),
             tableOutput("multiModelCmpDetails")
+          ),
+          tabPanel(
+            "Feature Critic",
+            plotOutput("featCritPlot")
           )
         )
       )

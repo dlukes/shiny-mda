@@ -1,3 +1,5 @@
+library(tibble)
+
 # Load and preprocess data from an *.RData file in results/. Use data in the format returned by this
 # function to develop new functionality.
 loadData <- function(path) {
@@ -26,7 +28,13 @@ loadData <- function(path) {
     gather(Factor, Loading, -Feature, factor_key=TRUE)
   lfactors <- levels(ldf$Factor)
 
-  list(ldf=ldf, fdf=fdf, lfactors=lfactors, ffactors=ffactors, modes=modes, divisions=divisions, orig=env$res.data)
+  feat_crit_table <- data.frame(env$fit$loadings[,], h2 = env$fit$communality, comp = env$fit$complexity)
+  feat_crit_table <- rownames_to_column(feat_crit_table, var="Feature")
+
+  list(
+    ldf=ldf, fdf=fdf, lfactors=lfactors, ffactors=ffactors, modes=modes, divisions=divisions,
+    orig=env$res.data, feat_crit_table=feat_crit_table
+  )
 }
 
 cpact_levels_last <- function(fct) {
