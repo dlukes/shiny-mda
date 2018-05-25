@@ -1,3 +1,7 @@
+body {
+  overflow-y: scroll;
+}
+
 #mainPanel {
   top: -41px;
 }
@@ -20,19 +24,6 @@
 
 #multiModelCmpPlot {
   height: 90vh !important;
-}
-
-#controls-outer {
-  max-height: 90vh;
-  overflow-y: auto;
-  box-sizing: border-box;
-  /* instead of padding on outer well... */
-  padding: 0 !important;
-}
-
-#controls-inner {
-  /* ... put padding on inner div, so that it's preserved on overflow-y */
-  padding: 19px;
 }
 
 #cql {
