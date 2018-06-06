@@ -16,8 +16,8 @@ loadData <- function(path) {
   fdf$SUPERCLASS <- as.factor(fdf$SUPERCLASS)
   fdf$CLASS <- as.factor(fdf$CLASS)
   # reorder levels so that cpact* goes last to keep original visuals
-  fdf$MODE <- cpact_levels_last(fdf$MODE)
-  fdf$DIVISION <- cpact_levels_last(fdf$DIVISION)
+  fdf$MODE <- orig_levels_first(fdf$MODE)
+  fdf$DIVISION <- orig_levels_first(fdf$DIVISION)
   fdf$X <- row.names(fdf)
   ffactors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(fdf), value=TRUE, invert=TRUE)
   modes <- levels(fdf$MODE)
@@ -37,9 +37,9 @@ loadData <- function(path) {
   )
 }
 
-cpact_levels_last <- function(fct) {
+orig_levels_first <- function(fct) {
   lvls <- levels(fct)
-  cpact <- grep("cpact", lvls, value=TRUE)
-  non_cpact <- grep("cpact", lvls, value=TRUE, invert=TRUE)
-  factor(fct, levels=c(non_cpact, cpact))
+  orig <- grep("^(spo|web|wri)($|-)", lvls, value=TRUE)
+  non_orig <- grep("^(spo|web|wri)($|-)", lvls, value=TRUE, invert=TRUE)
+  factor(fct, levels=c(orig, non_orig))
 }
