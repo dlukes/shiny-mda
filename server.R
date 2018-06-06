@@ -140,16 +140,16 @@ function(input, output, session) {
         plot <- ggplot(gathered, aes(SCORE, color=DIVISION, linetype=MODE)) +
           geom_density()
       } else if (plot_type == "violin") {
-        plot <- ggplot(gathered, aes(DIVISION, SCORE, color=DIVISION, linetype=MODE)) +
-          geom_violin()
+        plot <- ggplot(gathered, aes(DIVISION, SCORE, fill=DIVISION, linetype=MODE)) +
+          geom_violin(alpha=.5)
       } else if (plot_type == "box") {
-        plot <- ggplot(gathered, aes(DIVISION, SCORE, color=DIVISION, linetype=MODE)) +
-          geom_boxplot()
+        plot <- ggplot(gathered, aes(DIVISION, SCORE, fill=DIVISION, linetype=MODE)) +
+          geom_boxplot(alpha=.5)
       }
       plot <- plot + facet_wrap(~FACTOR, ncol=1) +
         scale_linetype_manual(values=lines, drop=FALSE)
     }
-    plot + scale_color_manual(values=palette, drop=FALSE)
+    plot + scale_color_manual(values=palette, drop=FALSE) + scale_fill_manual(values=palette, drop=FALSE)
   })
 
   # When a double-click happens, check if there's a brush on the plot.
