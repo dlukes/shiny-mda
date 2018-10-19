@@ -5,7 +5,9 @@
 # add_correlated_feats(test$ldf, test$orig) %>%
 #   filter(!is.na(CorrelatedWith))
 
-library(tidyverse)
+library(tibble)
+library(tidyr)
+library(dplyr)
 
 add_correlated_feats <- function(ldf, orig, cor_thresh=c(-.95, .95)) {
   as.data.frame(cor(orig, method="spearman")) %>%

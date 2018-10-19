@@ -1,4 +1,5 @@
 library(ggplot2)
+library(dplyr)
 
 genreDiff <- function(data, ids1, ids2) {
   data <- select(data, -X, -MODE, -DIVISION, -SUPERCLASS, -CLASS)

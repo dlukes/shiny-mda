@@ -1,4 +1,5 @@
-library(tidyverse)
+library(tibble)
+library(tidyr)
 
 # Load and preprocess data from an *.RData file in results/. Use data in the format returned by this
 # function to develop new functionality.

@@ -5,6 +5,7 @@
 # plotFeatCrit(test$feat_crit_table, "GLS1")
 
 library(ggplot2)
+library(dplyr)
 
 plotFeatCrit <- function(feat_crit_table, dim) {
   ggplot(data=filter(feat_crit_table, abs(round(get(dim), 2)) >= 0.3),

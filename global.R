@@ -2,8 +2,11 @@ library(jsonlite)
 library(ggplot2)
 library(Cairo)  # For nicer ggplot2 output when deployed on Linux
 
-# load tidyverse last to make sure it overrides all conflicting function names
-library(tidyverse)
+# load tidyverse packages last to make sure they override all conflicting function names
+library(readr)
+library(tibble)
+library(tidyr)
+library(dplyr)
 
 enableBookmarking("server")
 
