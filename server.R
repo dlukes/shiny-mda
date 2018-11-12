@@ -9,15 +9,30 @@ source("feat_crit.R", local=TRUE)
 ltable_js <- DT::JS(read_file("./www/loadingsTable.js"))
 ltable_state_default <- DT::JS("function(settings, data) { return false; }")
 
+null2empty_list <- function(inp) {
+  if (is.null(inp)) {
+    return(list())
+  } else {
+    return(inp)
+  }
+}
+
 # This function encapsulates all changes to the UI that are driven by input data, which means they
 # need a special treatment w.r.t. bookmarking.
 dataDrivenUIUpdate <- function(session, mode, division, fx, fy, showfactors) {
-  updateCheckboxGroupInput(session, "mode", choices=mode[[1]], selected=mode[[2]])
-  updateCheckboxGroupInput(session, "division", choices=division[[1]], selected=division[[2]])
+  # NOTE: When no option is selected in a checkbox group, Shiny represents
+  # this as NULL. Unfortunately, the update functions below simply ignore
+  # NULL arguments, so we have to manually convert possible NULLs into
+  # empty lists. This is necessary for bookmarking to work properly.
+  selected_modes <- null2empty_list(mode[[2]])
+  updateCheckboxGroupInput(session, "mode", choices=mode[[1]], selected=selected_modes)
+  selected_divisions <- null2empty_list(division[[2]])
+  updateCheckboxGroupInput(session, "division", choices=division[[1]], selected=selected_divisions)
   updateSelectInput(session, "fx", choices=fx[[1]], selected=fx[[2]])
   updateSelectInput(session, "fy", choices=fy[[1]], selected=fy[[2]])
   updateSelectInput(session, "feat_crit_dim", choices=fx[[1]], selected=fx[[2]])
-  updateCheckboxGroupInput(session, "showfactors", choices=showfactors[[1]], selected=showfactors[[2]])
+  selected_showfactors <- null2empty_list(showfactors[[2]])
+  updateCheckboxGroupInput(session, "showfactors", choices=showfactors[[1]], selected=selected_showfactors)
 }
 
 function(input, output, session) {
