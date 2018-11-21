@@ -22,6 +22,9 @@ function(request) {
               selectInput("fy", "Y axis:", choices=c())
             )
           ),
+          conditionalPanel(condition="input.tabsetPanel == 'LoadingsCmp'",
+            selectInput("dimA", "Dimension A:", choices=c())
+          ),
           conditionalPanel(condition="input.tabsetPanel == 'Factors 2-dim'",
             selectInput("distPlotType", "Plot type:",
                         list(Combined=c("scatter", "ellipse", "density2d"),
@@ -58,8 +61,16 @@ function(request) {
             br(),
             actionButton("subcorp2", "Specify Subcorpus 2")
           ),
-          conditionalPanel(condition="input.tabsetPanel == 'ModelCmp'",
+          conditionalPanel(condition="/^(Model|Loadings)Cmp$/.test(input.tabsetPanel)",
             selectInput("cmp_results", "Compare with:", choices=fresults, selected=fresults[2])
+          ),
+          conditionalPanel(condition="input.tabsetPanel == 'LoadingsCmp'",
+            selectInput("dimB", "Dimension B:", choices=c()),
+            div(
+              class="outer-range-wrapper",
+              sliderInput("lc_feats_thresh", "Loading threshold:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
+            ),
+            checkboxInput("lc_only_feats_in_both", "Only show features present in both models")
           ),
           conditionalPanel(condition="input.tabsetPanel == 'MultiModelCmp'",
             selectizeInput("model_seq", "Sequence of models:", fresults_names, selected=init_model_seq, multiple=TRUE),
@@ -132,6 +143,15 @@ function(request) {
           tabPanel(
             "ModelCmp",
             plotOutput("modelCmpPlot")
+          ),
+          tabPanel(
+            "LoadingsCmp",
+            h3("In both dimensions:"),
+            tableOutput("loadingsCmpBoth"),
+            h3("Only in dimension A:"),
+            tableOutput("loadingsCmpA"),
+            h3("Only in dimension B:"),
+            tableOutput("loadingsCmpB")
           ),
           tabPanel(
             "MultiModelCmp",

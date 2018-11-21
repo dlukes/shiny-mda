@@ -2,6 +2,7 @@ source("load_data.R", local=TRUE)
 source("dim_graph.R", local=TRUE)
 source("genre_diff.R", local=TRUE)
 source("model_cmp.R", local=TRUE)
+source("loadings_cmp.R", local=TRUE)
 source("filterRange_override.R", local=TRUE)
 source("correlated_feats.R", local=TRUE)
 source("feat_crit.R", local=TRUE)
@@ -17,9 +18,11 @@ null2empty_list <- function(inp) {
   }
 }
 
-# This function encapsulates all changes to the UI that are driven by input data, which means they
-# need a special treatment w.r.t. bookmarking.
-dataDrivenUIUpdate <- function(session, mode, division, fx, fy, showfactors) {
+# The following two functions encapsulate all changes to the UI that are
+# driven by input data, which means they need a special treatment w.r.t.
+# bookmarking.
+
+dataDrivenUIUpdate <- function(session, mode, division, fx, fy, showfactors, dimA, feat_crit_dim) {
   # NOTE: When no option is selected in a checkbox group, Shiny represents
   # this as NULL. Unfortunately, the update functions below simply ignore
   # NULL arguments, so we have to manually convert possible NULLs into
@@ -30,9 +33,14 @@ dataDrivenUIUpdate <- function(session, mode, division, fx, fy, showfactors) {
   updateCheckboxGroupInput(session, "division", choices=division[[1]], selected=selected_divisions)
   updateSelectInput(session, "fx", choices=fx[[1]], selected=fx[[2]])
   updateSelectInput(session, "fy", choices=fy[[1]], selected=fy[[2]])
-  updateSelectInput(session, "feat_crit_dim", choices=fx[[1]], selected=fx[[2]])
   selected_showfactors <- null2empty_list(showfactors[[2]])
   updateCheckboxGroupInput(session, "showfactors", choices=showfactors[[1]], selected=selected_showfactors)
+  updateSelectInput(session, "dimA", choices=dimA[[1]], selected=dimA[[2]])
+  updateSelectInput(session, "feat_crit_dim", choices=feat_crit_dim[[1]], selected=feat_crit_dim[[2]])
+}
+
+cmpDataDrivenUIUpdate <- function(session, dimB) {
+  updateSelectInput(session, "dimB", choices=dimB[[1]], selected=dimB[[2]])
 }
 
 function(input, output, session) {
@@ -59,19 +67,27 @@ function(input, output, session) {
 
     ans <- loadData(rdata)
 
+    first_factor_init <- list(ans$ffactors, ans$ffactors[1])
     dataDrivenUIUpdate(session,
       mode=list(ans$modes, ans$modes),
       division=list(ans$divisions, NULL),
-      fx=list(ans$ffactors, ans$ffactors[1]),
+      fx=first_factor_init,
       fy=list(ans$ffactors, ans$ffactors[2]),
-      showfactors=list(ans$lfactors, ans$lfactors)
+      showfactors=list(ans$lfactors, ans$lfactors),
+      dimA=first_factor_init,
+      feat_crit_dim=first_factor_init
     )
 
     ans
   })
 
   cmpData <- reactive({
-    loadData(input$cmp_results)
+    ans <- loadData(input$cmp_results)
+    data <- data()
+    cmpDataDrivenUIUpdate(session,
+      dimB=list(ans$ffactors, ans$ffactors[1])
+    )
+    ans
   })
 
   multiData <- reactivePoll(5000, session,
@@ -112,7 +128,12 @@ function(input, output, session) {
       division=list(NULL, state$input$division),
       fx=list(NULL, state$input$fx),
       fy=list(NULL, state$input$fy),
-      showfactors=list(NULL, state$input$showfactors)
+      showfactors=list(NULL, state$input$showfactors),
+      dimA=list(NULL, state$input$dimA),
+      feat_crit_dim=list(NULL, state$input$feat_crit_dim)
+    )
+    cmpDataDrivenUIUpdate(session,
+      dimB=list(NULL, state$input$dimB)
     )
   })
 
@@ -355,6 +376,34 @@ function(input, output, session) {
     cmpFeats <- modelCmpFeatures(data()$ldf, cmpData()$ldf)
     cmpChunks <- modelCmpChunks(data()$fdf, cmpData()$fdf)
     plotModelCmp(bind_rows(cmpFeats, cmpChunks), mname1, mname2)
+  })
+
+  ###################################################################################################
+  # LOADINGS COMPARISON
+
+  loadingsCmpReactive <- reactive({
+    feat2desc <- select(feat2desc, Feature, Description)
+    compare_loadings(
+      data()$ldf,
+      cmpData()$ldf,
+      input$dimA,
+      input$dimB,
+      feat2desc,
+      input$lc_feats_thresh,
+      input$lc_only_feats_in_both
+    )
+  })
+
+  output$loadingsCmpBoth <- renderTable({
+    loadingsCmpReactive()$both
+  })
+
+  output$loadingsCmpA <- renderTable({
+    loadingsCmpReactive()$onlyA
+  })
+
+  output$loadingsCmpB <- renderTable({
+    loadingsCmpReactive()$onlyB
   })
 
   ###################################################################################################
