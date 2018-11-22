@@ -146,11 +146,12 @@ function(request) {
           ),
           tabPanel(
             "LoadingsCmp",
-            h3("In both dimensions:"),
+            h2("Features above threshold…"),
+            h3("… in both dimensions:"),
             tableOutput("loadingsCmpBoth"),
-            h3("Only in dimension A:"),
+            h3("… only in dimension A:"),
             tableOutput("loadingsCmpA"),
-            h3("Only in dimension B:"),
+            h3("… only in dimension B:"),
             tableOutput("loadingsCmpB")
           ),
           tabPanel(
