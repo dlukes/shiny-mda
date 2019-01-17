@@ -29,12 +29,15 @@ loadData <- function(path) {
     gather(Factor, Loading, -Feature, factor_key=TRUE)
   lfactors <- levels(ldf$Factor)
 
-  feat_crit_table <- data.frame(env$fit$loadings[,], h2 = env$fit$communality, comp = env$fit$complexity)
+  feat_crit_table <- data.frame(env$fit$loadings[,], h2=env$fit$communality, comp=env$fit$complexity)
   feat_crit_table <- rownames_to_column(feat_crit_table, var="Feature")
+
+  dendr_weights <- env$fit$Vaccounted[2,]
+  dendr_weights <- dendr_weights / sum(dendr_weights)
 
   list(
     ldf=ldf, fdf=fdf, lfactors=lfactors, ffactors=ffactors, modes=modes, divisions=divisions,
-    orig=env$res.data, feat_crit_table=feat_crit_table
+    orig=env$res.data, feat_crit_table=feat_crit_table, dendr_weights=dendr_weights
   )
 }
 

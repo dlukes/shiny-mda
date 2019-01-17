@@ -6,6 +6,7 @@ source("loadings_cmp.R", local=TRUE)
 source("filterRange_override.R", local=TRUE)
 source("correlated_feats.R", local=TRUE)
 source("feat_crit.R", local=TRUE)
+source("dend.R", local=TRUE)
 
 ltable_js <- DT::JS(read_file("./www/loadingsTable.js"))
 ltable_state_default <- DT::JS("function(settings, data) { return false; }")
@@ -52,6 +53,9 @@ function(input, output, session) {
   mmc_feats_from_mod_d <- debounce(reactive(input$mmc_feats_from_mod), 1000)
   mmc_feats_from_dim_d <- debounce(reactive(input$mmc_feats_from_dim), 1000)
   mmc_feats_thresh_d <- debounce(reactive(input$mmc_feats_thresh), 1000)
+  dendr_num_groups_d <- debounce(reactive(input$dendr_num_groups), 1000)
+  dendr_target_group_d <- debounce(reactive(input$dendr_target_group), 1000)
+  dendr_summarize_by_d <- debounce(reactive(input$dendr_summarize_by), 1000)
 
   ###################################################################################################
   # DATA
@@ -465,5 +469,32 @@ function(input, output, session) {
 
   output$featCritPlot <- renderPlot({
     plotFeatCrit(data()$feat_crit_table, input$feat_crit_dim)
+  })
+
+  ###################################################################################################
+  # DENDROGRAM
+
+  dendr_reactive <- reactive({
+    data <- data()
+    dendr_num_groups <- dendr_num_groups_d()
+    dendr_target_group <- dendr_target_group_d()
+    dendr_summarize_by <- dendr_summarize_by_d()
+    dend <- vytvor_dendrogram(data$fdf, data$dendr_weights)
+    if (is.na(dendr_target_group)) {
+      plot <- nakresli_dendrogram(dend)
+      summary <- clust_summary(dend, dendr_num_groups, metadata=dendr_summarize_by)
+    } else {
+      plot <- vyznac_skupinu(dend, dendr_num_groups, dendr_target_group)
+      summary <- vypis_skupinu(dend, dendr_num_groups, dendr_target_group, metadata=dendr_summarize_by)
+    }
+    list(plot=plot, summary=summary)
+  })
+
+  output$dendrPlot <- renderPlot({
+    dendr_reactive()$plot
+  })
+
+  output$dendrSummary <- renderPrint({
+    dendr_reactive()$summary
   })
 }

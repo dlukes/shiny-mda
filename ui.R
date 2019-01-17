@@ -89,6 +89,14 @@ function(request) {
           ),
           conditionalPanel(condition="input.tabsetPanel == 'Feature Critic'",
             selectInput("feat_crit_dim", "Dimension:", choices=c())
+          ),
+          conditionalPanel(condition="input.tabsetPanel == 'Dendrogram'",
+            numericInput("dendr_num_groups", "Number of groups:", 8, min=1, step=1),
+            numericInput("dendr_target_group", "Target group:", NA, min=1, step=1),
+            selectInput("dendr_summarize_by", "Summarize by:",
+                        c(mode="MODE", division="DIVISION", class="CLASS", id="id"),
+                        c(mode="MODE"), multiple=TRUE
+            )
           )
         )
       ),
@@ -162,6 +170,11 @@ function(request) {
           tabPanel(
             "Feature Critic",
             plotOutput("featCritPlot")
+          ),
+          tabPanel(
+            "Dendrogram",
+            plotOutput("dendrPlot"),
+            verbatimTextOutput("dendrSummary")
           )
         )
       )
