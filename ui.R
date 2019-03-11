@@ -87,8 +87,15 @@ function(request) {
             selectInput("mmc_dets_m2", "To model:", fresults_names, selected=init_model_seq[2]),
             numericInput("mmc_dets_top", "Show only top loading products:", 20, min=0, step=1)
           ),
-          conditionalPanel(condition="input.tabsetPanel == 'Feature Critic'",
+          conditionalPanel(condition="['Feature Critic', 'TopFeatsPerDim'].includes(input.tabsetPanel)",
             selectInput("feat_crit_dim", "Dimension:", choices=c())
+          ),
+          conditionalPanel(condition="input.tabsetPanel == 'TopFeatsPerDim'",
+            div(
+              class="outer-range-wrapper",
+              sliderInput("top_feats_per_dim_thresh", "Loading threshold:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
+            ),
+            textInput("top_feats_per_dim_chunk_id", "Chunk ID:")
           )
         )
       ),
@@ -163,6 +170,10 @@ function(request) {
           tabPanel(
             "Feature Critic",
             plotOutput("featCritPlot", height="90vh")
+          ),
+          tabPanel(
+            "TopFeatsPerDim",
+            plotOutput("topFeatsPerDimPlot")
           )
         )
       )

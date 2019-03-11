@@ -1,5 +1,6 @@
 library(tibble)
 library(tidyr)
+library(dplyr)
 
 # Load and preprocess data from an *.RData file in results/. Use data in the format returned by this
 # function to develop new functionality.
@@ -7,6 +8,8 @@ loadData <- function(path) {
   env <- new.env()
   load(path, env)
   env <- as.list(env)
+
+  orig <- env$res.data
 
   fdf <- env$factors
   # expand division label to make it more intuitive
@@ -29,12 +32,21 @@ loadData <- function(path) {
     gather(Factor, Loading, -Feature, factor_key=TRUE)
   lfactors <- levels(ldf$Factor)
 
+  meta <- as_tibble(fdf, rownames="ID") %>%
+    select(ID, MODE, DIVISION, SUPERCLASS, CLASS)
+  norm <- as_tibble(orig, rownames="ID") %>%
+    mutate_if(is.numeric, funs(ntile(., n=100))) %>%
+    left_join(meta, by="ID") %>%
+    select(ID, MODE, DIVISION, SUPERCLASS, CLASS, everything()) %>%
+    # TODO: use gather_if when available
+    gather("FEAT", "PERCENTILE", colnames(select_if(., is.numeric)))
+
   feat_crit_table <- data.frame(env$fit$loadings[,], h2 = env$fit$communality, comp = env$fit$complexity)
   feat_crit_table <- rownames_to_column(feat_crit_table, var="Feature")
 
   list(
     ldf=ldf, fdf=fdf, lfactors=lfactors, ffactors=ffactors, modes=modes, divisions=divisions,
-    orig=env$res.data, feat_crit_table=feat_crit_table
+    orig=orig, norm=norm, feat_crit_table=feat_crit_table
   )
 }
 

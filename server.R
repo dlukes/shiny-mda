@@ -6,6 +6,7 @@ source("loadings_cmp.R", local=TRUE)
 source("filterRange_override.R", local=TRUE)
 source("correlated_feats.R", local=TRUE)
 source("feat_crit.R", local=TRUE)
+source("top_features_per_dim.R", local=TRUE)
 
 ltable_js <- DT::JS(read_file("./www/loadingsTable.js"))
 ltable_state_default <- DT::JS("function(settings, data) { return false; }")
@@ -211,6 +212,7 @@ function(input, output, session) {
     # were a base graphics plot, we'd need those.
     point <- nearPoints(data()$fdf, fplot_click, addDist=TRUE)[1, ]
     id <- point$X
+    updateTextInput(session, "top_feats_per_dim_chunk_id", value=id)
     withTags(div(p(b(paste0(fx, ":")), point[[fx]]),
                  p(b(paste0(fy, ":")), point[[fy]]),
                  p(b("MODE:"), point$MODE),
@@ -465,5 +467,29 @@ function(input, output, session) {
 
   output$featCritPlot <- renderPlot({
     plotFeatCrit(data()$feat_crit_table, input$feat_crit_dim)
+  })
+
+  ###################################################################################################
+  # TOP FEATURES PER DIMENSION
+
+  top_feats_per_dim_thresh_d <- debounce(reactive(input$top_feats_per_dim_thresh), 1000)
+  top_feats_per_dim_chunk_id_d <- debounce(reactive(input$top_feats_per_dim_chunk_id), 1000)
+
+  topFeatsPerDimReactive <- reactive({
+    data <- data()
+    top_feature_boxplot(
+      data$norm,
+      data$ldf,
+      input$feat_crit_dim,
+      top_feats_per_dim_thresh_d(),
+      top_feats_per_dim_chunk_id_d()
+    )
+  })
+
+  output$topFeatsPerDimPlot <- renderPlot({
+      topFeatsPerDimReactive()$plot
+    },
+    height=function() {
+      300*topFeatsPerDimReactive()$nrow
   })
 }
