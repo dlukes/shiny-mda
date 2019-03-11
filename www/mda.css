@@ -6,30 +6,6 @@ body {
   top: -41px;
 }
 
-#fplot {
-  height: 90vh !important;
-}
-
-#lplot {
-  height: 90vh !important;
-}
-
-#genreDiffPlot {
-  height: 80vh !important;
-}
-
-#modelCmpPlot {
-  height: 90vh !important;
-}
-
-#multiModelCmpPlot {
-  height: 90vh !important;
-}
-
-#featCritPlot {
-  height: 90vh !important;
-}
-
 #cql {
   font-family: monospace;
 }

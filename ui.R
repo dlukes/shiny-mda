@@ -106,7 +106,8 @@ function(request) {
                       brush=brushOpts(
                         id="fplot_brush",
                         resetOnNew=TRUE
-                      )
+                      ),
+                      height="90vh"
             )
           ),
           tabPanel(
@@ -116,7 +117,7 @@ function(request) {
           ),
           tabPanel(
             "Loadings Plot",
-            plotOutput("lplot")
+            plotOutput("lplot", height="90vh")
           ),
           tabPanel(
             "Loadings Table",
@@ -138,11 +139,11 @@ function(request) {
                 uiOutput("descSubcorp2")
               )
             ),
-            plotOutput("genreDiffPlot")
+            plotOutput("genreDiffPlot", height="80vh")
           ),
           tabPanel(
             "ModelCmp",
-            plotOutput("modelCmpPlot")
+            plotOutput("modelCmpPlot", height="90vh")
           ),
           tabPanel(
             "LoadingsCmp",
@@ -156,12 +157,12 @@ function(request) {
           ),
           tabPanel(
             "MultiModelCmp",
-            plotOutput("multiModelCmpPlot"),
+            plotOutput("multiModelCmpPlot", height="90vh"),
             tableOutput("multiModelCmpDetails")
           ),
           tabPanel(
             "Feature Critic",
-            plotOutput("featCritPlot")
+            plotOutput("featCritPlot", height="90vh")
           )
         )
       )
