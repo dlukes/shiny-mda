@@ -95,7 +95,8 @@ function(request) {
               class="outer-range-wrapper",
               sliderInput("top_feats_per_dim_thresh", "Loading threshold:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
             ),
-            textInput("top_feats_per_dim_chunk_id", "Chunk ID:")
+            textInput("top_feats_per_dim_chunk_id", "Chunk ID:"),
+            textInput("top_feats_per_dim_meta_regex", "Show classes matching regex:")
           )
         )
       ),

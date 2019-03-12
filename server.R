@@ -474,6 +474,7 @@ function(input, output, session) {
 
   top_feats_per_dim_thresh_d <- debounce(reactive(input$top_feats_per_dim_thresh), 1000)
   top_feats_per_dim_chunk_id_d <- debounce(reactive(input$top_feats_per_dim_chunk_id), 1000)
+  top_feats_per_dim_meta_regex_d <- debounce(reactive(input$top_feats_per_dim_meta_regex), 1000)
 
   topFeatsPerDimReactive <- reactive({
     data <- data()
@@ -482,7 +483,8 @@ function(input, output, session) {
       data$ldf,
       input$feat_crit_dim,
       top_feats_per_dim_thresh_d(),
-      top_feats_per_dim_chunk_id_d()
+      top_feats_per_dim_chunk_id_d(),
+      top_feats_per_dim_meta_regex_d()
     )
   })
 

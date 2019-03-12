@@ -22,18 +22,30 @@ feats_above_thresh <- function(ldf, dimname, thresh) {
     as_tibble()
 }
 
-top_feature_boxplot <- function(norm_df, ldf, dimname="GLS1", thresh=c(-3, .3), chunk_id=NULL) {
+top_feature_boxplot <- function(norm_df, ldf, dimname="GLS1", thresh=c(-3, .3), chunk_id="", meta_regex="") {
+  chunk_id <- trimws(chunk_id)
+  meta_regex <- trimws(meta_regex)
   top_feats <- feats_above_thresh(ldf, dimname, thresh)
-  df <- filter(norm_df, FEAT %in% top_feats$Feature) %>%
+  full_df <- filter(norm_df, FEAT %in% top_feats$Feature) %>%
     mutate(FEAT=factor(FEAT, levels=top_feats$Feature, labels=top_feats$Label))
-  plot <- ggplot(df, aes(DIVISION, PERCENTILE, fill=DIVISION)) +
+  if (meta_regex == "") {
+    box_df <- full_df
+    group_column <- "DIVISION"
+  } else {
+    # don't paste MODE here at the beginning, it's already pasted at the
+    # beginning of DIVISION
+    box_df <- mutate(full_df, MERGED_META=paste(DIVISION, SUPERCLASS, CLASS, sep="-")) %>%
+      filter(grepl(meta_regex, MERGED_META))
+    group_column <- "MERGED_META"
+  }
+  plot <- ggplot(box_df, aes_string(group_column, "PERCENTILE", fill=group_column)) +
     geom_boxplot(alpha=.5) +
     facet_wrap(~FEAT, labeller=label_wrap_gen(30)) +
     coord_flip() +
     scale_fill_manual(values=palette, drop=FALSE)
-  if (!is.null(chunk_id)) {
+  if (chunk_id != "") {
     plot <- plot +
-      geom_hline(aes(yintercept=PERCENTILE), filter(df, ID == chunk_id), color="red")
+      geom_hline(aes(yintercept=PERCENTILE), filter(full_df, ID == chunk_id), color="red")
   }
   # nrow is needed to compute a sensible height for Shiny to render the
   # plot
