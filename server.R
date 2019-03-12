@@ -240,18 +240,6 @@ function(input, output, session) {
   ###################################################################################################
   # LOADINGS
 
-  output$lplot <- renderPlot({
-    ggplot(data()$ldf, aes(Feature, abs(Loading), fill=Loading)) +
-      facet_wrap(~Factor, nrow=1) +
-      geom_bar(stat="identity") +
-      coord_flip() +
-      scale_fill_gradient2(name="Loading",
-                           high="blue", mid="white", low="red",
-                           midpoint=0, guide="colourbar") +
-      ylab("Loading Strength") +
-      theme_bw(base_size=8)
-  })
-
   ltable <- reactive({
     data <- data()
     thresh <- input$thresh

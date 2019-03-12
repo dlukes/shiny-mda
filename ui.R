@@ -124,10 +124,6 @@ function(request) {
             plotOutput("d2plot")
           ),
           tabPanel(
-            "Loadings Plot",
-            plotOutput("lplot", height="90vh")
-          ),
-          tabPanel(
             "Loadings Table",
             DT::dataTableOutput("ltable")
           ),
