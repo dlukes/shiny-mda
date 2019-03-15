@@ -16,11 +16,11 @@ function(request) {
           bookmarkButton(),
           conditionalPanel(condition="input.tabsetPanel != 'MultiModelCmp'",
             fileInput("rdata", "Upload your own data:", accept=".RData"),
-            selectInput("results", "Results:", choices=fresults, selected=fresults[1]),
-            conditionalPanel(condition="/^Factors/.test(input.tabsetPanel)",
-              selectInput("fx", "X axis:", choices=c()),
-              selectInput("fy", "Y axis:", choices=c())
-            )
+            selectInput("results", "Results:", choices=fresults, selected=fresults[1])
+          ),
+          conditionalPanel(condition="/^Factors/.test(input.tabsetPanel)",
+            selectInput("fx", "X axis:", choices=c()),
+            selectInput("fy", "Y axis:", choices=c())
           ),
           conditionalPanel(condition="input.tabsetPanel == 'LoadingsCmp'",
             selectInput("dimA", "Dimension A:", choices=c())
@@ -97,6 +97,23 @@ function(request) {
             ),
             textInput("top_feats_per_dim_chunk_id", "Chunk ID:"),
             textInput("top_feats_per_dim_meta_regex", "Show classes matching regex:")
+          ),
+          conditionalPanel(condition="input.tabsetPanel == 'Text Types'",
+            sliderInput("cluster_k", "Number of clusters:", 3, 15, 10, 1),
+            h4("2D clusters plot:"),
+            selectInput("cluster_2D_x", "X axis:", choices=c()),
+            selectInput("cluster_2D_y", "Y axis:", choices=c()),
+            sliderInput("cluster_2D_a", "Periphery cutoff:", .1, 2, .4, .1),
+            h4("Cluster means plot:"),
+            selectizeInput("cluster_means_dims", "Dimensions:", choices=c(), multiple=TRUE),
+            h4("Top N categories in cluster C:"),
+            fluidRow(
+              column(6, numericInput("cluster_info_topn", "N:", 5)),
+              column(6, numericInput("cluster_info_cluster", "C:", 1))
+            ),
+            tableOutput("clusterInfo"),
+            h4("Number of chunks per cluster:"),
+            tableOutput("clusterSizes")
           )
         )
       ),
@@ -171,6 +188,13 @@ function(request) {
           tabPanel(
             "TopFeatsPerDim",
             plotOutput("topFeatsPerDimPlot")
+          ),
+          tabPanel(
+            "Text Types",
+            h4("2D clusters plot"),
+            plotOutput("cluster2DPlot", height="90vh"),
+            h4("Cluster means plot"),
+            plotOutput("clusterMeansPlot", height="90vh")
           )
         )
       )

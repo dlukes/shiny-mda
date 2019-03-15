@@ -4,6 +4,9 @@
 # lst <- top_feature_boxplot(data$norm, data$ldf, chunk_id="_metodickyp_0")
 # print(lst$plot)
 
+library(ggplot2)
+library(dplyr)
+
 feats_above_thresh <- function(ldf, dimname, thresh) {
   filter(ldf, Factor == dimname & (Loading < thresh[1] | Loading > thresh[2])) %>%
     mutate(Feature=as.character(Feature)) %>%

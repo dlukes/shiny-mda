@@ -7,6 +7,7 @@ source("filterRange_override.R", local=TRUE)
 source("correlated_feats.R", local=TRUE)
 source("feat_crit.R", local=TRUE)
 source("top_features_per_dim.R", local=TRUE)
+source("text_types.R", local=TRUE)
 
 ltable_js <- DT::JS(read_file("./www/loadingsTable.js"))
 ltable_state_default <- DT::JS("function(settings, data) { return false; }")
@@ -20,10 +21,13 @@ null2empty_list <- function(inp) {
 }
 
 # The following two functions encapsulate all changes to the UI that are
-# driven by input data, which means they need a special treatment w.r.t.
+# driven by input data, which means they need special treatment w.r.t.
 # bookmarking.
 
-dataDrivenUIUpdate <- function(session, mode, division, fx, fy, showfactors, dimA, feat_crit_dim) {
+dataDrivenUIUpdate <- function(
+  session, mode, division, fx, fy, showfactors, dimA, feat_crit_dim,
+  cluster_2D_x, cluster_2D_y, cluster_means_dims
+) {
   # NOTE: When no option is selected in a checkbox group, Shiny represents
   # this as NULL. Unfortunately, the update functions below simply ignore
   # NULL arguments, so we have to manually convert possible NULLs into
@@ -38,6 +42,9 @@ dataDrivenUIUpdate <- function(session, mode, division, fx, fy, showfactors, dim
   updateCheckboxGroupInput(session, "showfactors", choices=showfactors[[1]], selected=selected_showfactors)
   updateSelectInput(session, "dimA", choices=dimA[[1]], selected=dimA[[2]])
   updateSelectInput(session, "feat_crit_dim", choices=feat_crit_dim[[1]], selected=feat_crit_dim[[2]])
+  updateSelectInput(session, "cluster_2D_x", choices=cluster_2D_x[[1]], selected=cluster_2D_x[[2]])
+  updateSelectInput(session, "cluster_2D_y", choices=cluster_2D_y[[1]], selected=cluster_2D_y[[2]])
+  updateSelectizeInput(session, "cluster_means_dims", choices=cluster_means_dims[[1]], selected=cluster_means_dims[[2]])
 }
 
 cmpDataDrivenUIUpdate <- function(session, dimB) {
@@ -69,14 +76,18 @@ function(input, output, session) {
     ans <- loadData(rdata)
 
     first_factor_init <- list(ans$ffactors, ans$ffactors[1])
+    second_factor_init <- list(ans$ffactors, ans$ffactors[2])
     dataDrivenUIUpdate(session,
       mode=list(ans$modes, ans$modes),
       division=list(ans$divisions, NULL),
       fx=first_factor_init,
-      fy=list(ans$ffactors, ans$ffactors[2]),
+      fy=second_factor_init,
       showfactors=list(ans$lfactors, ans$lfactors),
       dimA=first_factor_init,
-      feat_crit_dim=first_factor_init
+      feat_crit_dim=first_factor_init,
+      cluster_2D_x=first_factor_init,
+      cluster_2D_y=second_factor_init,
+      cluster_means_dims=list(ans$ffactors, ans$ffactors[1:2])
     )
 
     ans
@@ -131,7 +142,10 @@ function(input, output, session) {
       fy=list(NULL, state$input$fy),
       showfactors=list(NULL, state$input$showfactors),
       dimA=list(NULL, state$input$dimA),
-      feat_crit_dim=list(NULL, state$input$feat_crit_dim)
+      feat_crit_dim=list(NULL, state$input$feat_crit_dim),
+      cluster_2D_x=list(NULL, state$input$cluster_2D_x),
+      cluster_2D_y=list(NULL, state$input$cluster_2D_y),
+      cluster_means_dims=list(NULL, state$input$cluster_means_dims)
     )
     cmpDataDrivenUIUpdate(session,
       dimB=list(NULL, state$input$dimB)
@@ -476,10 +490,28 @@ function(input, output, session) {
     )
   })
 
-  output$topFeatsPerDimPlot <- renderPlot({
-      topFeatsPerDimReactive()$plot
-    },
+  output$topFeatsPerDimPlot <- renderPlot(
+    topFeatsPerDimReactive()$plot,
     height=function() {
       300*topFeatsPerDimReactive()$nrow
   })
+
+  ###################################################################################################
+  # TEXT TYPES
+
+  factorsClustersReactive <- reactive({
+    add_clusters(data()$fdf, input$cluster_k)
+  })
+  output$cluster2DPlot <- renderPlot(
+    cluster_2D_plot(factorsClustersReactive(), dim_x=input$cluster_2D_x, dim_y=input$cluster_2D_y, a=input$cluster_2D_a)
+  )
+  output$clusterMeansPlot <- renderPlot(
+    cluster_means_plot(factorsClustersReactive(), dims=input$cluster_means_dims)
+  )
+  output$clusterInfo <- renderTable(
+    cluster_info(factorsClustersReactive(), cluster=input$cluster_info_cluster, topn=input$cluster_info_topn)
+  )
+  output$clusterSizes <- renderTable(
+    count(factorsClustersReactive(), Cluster, sort=TRUE)
+  )
 }
