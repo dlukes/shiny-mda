@@ -32,8 +32,9 @@ loadData <- function(path) {
     gather(Factor, Loading, -Feature, factor_key=TRUE)
   lfactors <- levels(ldf$Factor)
 
-  meta <- as_tibble(fdf, rownames="ID") %>%
-    select(ID, MODE, DIVISION, SUPERCLASS, CLASS)
+  meta <- as_tibble(fdf) %>%
+    select(X, MODE, DIVISION, SUPERCLASS, CLASS) %>%
+    rename(ID=X)
   norm <- as_tibble(orig, rownames="ID") %>%
     mutate_if(is.numeric, funs(ntile(., n=100))) %>%
     left_join(meta, by="ID") %>%
