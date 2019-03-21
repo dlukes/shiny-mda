@@ -529,6 +529,6 @@ function(input, output, session) {
     cluster_info(factorsClustersReactive(), cluster=input$cluster_info_cluster, topn=input$cluster_info_topn)
   )
   output$clusterSizes <- renderTable(
-    count(factorsClustersReactive(), Cluster, sort=TRUE)
+    cluster_sizes(factorsClustersReactive())
   )
 }

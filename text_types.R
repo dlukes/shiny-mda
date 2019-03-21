@@ -9,6 +9,7 @@
 library(ggplot2)
 library(dplyr)
 library(tidyr)
+library(scales)
 
 # pomocna funkce na jednotne vytvareni klastru
 add_clusters <- function(factors, k=10) {
@@ -56,5 +57,11 @@ cluster_info <- function(factors_clusters, cluster, topn=5) {
     select(-MODE) %>%
     unite(Category, DIVISION, SUPERCLASS, CLASS, sep="-") %>%
     count(Category, sort=TRUE) %>%
+    mutate(`%`=percent(n / sum(n), accuracy=1)) %>%
     top_n(topn)
+}
+
+cluster_sizes <- function(factors_clusters) {
+  count(factors_clusters, Cluster, sort=TRUE) %>%
+    mutate(`%`=percent(n / sum(n), accuracy=1))
 }
