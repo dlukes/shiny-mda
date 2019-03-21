@@ -111,7 +111,6 @@ function(request) {
               column(6, numericInput("cluster_info_topn", "N:", 5)),
               column(6, numericInput("cluster_info_cluster", "C:", 1))
             ),
-            tableOutput("clusterInfo"),
             h4("Number of chunks per cluster:"),
             tableOutput("clusterSizes")
           )
@@ -194,7 +193,9 @@ function(request) {
             h4("2D clusters plot"),
             plotOutput("cluster2DPlot", height="90vh"),
             h4("Cluster means plot"),
-            plotOutput("clusterMeansPlot", height="90vh")
+            plotOutput("clusterMeansPlot", height="90vh"),
+            h4("Top N categories in cluster C"),
+            tableOutput("clusterInfo")
           )
         )
       )

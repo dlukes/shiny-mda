@@ -52,16 +52,21 @@ cluster_means_plot <- function(factors_clusters, dims) {
 # výpis nejčastějších textových kategorií v klastru
 # specifikuje se číslo klastru ("klastr") a počet vypisovaných kategorií ("topn") - nemusí sedět, pokud je poslední hodnota zastoupena v datech víckrát vypíšou se všechny instance
 cluster_info <- function(factors_clusters, cluster, topn=5) {
-  filter(factors_clusters, Cluster == cluster) %>%
-    # we don't need MODE, it's already integrated in DIVISION
-    select(-MODE) %>%
+  # we don't need MODE, it's already integrated in DIVISION
+  select(factors_clusters, -MODE) %>%
     unite(Category, DIVISION, SUPERCLASS, CLASS, sep="-") %>%
-    count(Category, sort=TRUE) %>%
-    mutate(`%`=percent(n / sum(n), accuracy=1)) %>%
+    group_by(Category) %>%
+    mutate(CATEGORY_SIZE=n()) %>%
+    ungroup() %>%
+    filter(Cluster == cluster) %>%
+    count(Category, CATEGORY_SIZE, sort=TRUE) %>%
+    mutate(`%Cluster`=percent(n / sum(n))) %>%
+    mutate(`%Category`=percent(n / CATEGORY_SIZE)) %>%
+    select(-CATEGORY_SIZE) %>%
     head(topn)
 }
 
 cluster_sizes <- function(factors_clusters) {
   count(factors_clusters, Cluster, sort=TRUE) %>%
-    mutate(`%`=percent(n / sum(n), accuracy=1))
+    mutate(`%`=percent(n / sum(n)))
 }
