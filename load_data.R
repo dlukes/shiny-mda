@@ -32,15 +32,24 @@ loadData <- function(path) {
     gather(Factor, Loading, -Feature, factor_key=TRUE)
   lfactors <- levels(ldf$Factor)
 
-  meta <- as_tibble(fdf) %>%
-    select(X, MODE, DIVISION, SUPERCLASS, CLASS) %>%
-    rename(ID=X)
-  norm <- as_tibble(orig, rownames="ID") %>%
-    mutate_if(is.numeric, funs(ntile(., n=100))) %>%
-    left_join(meta, by="ID") %>%
-    select(ID, MODE, DIVISION, SUPERCLASS, CLASS, everything()) %>%
-    # TODO: use gather_if when available
-    gather("FEAT", "PERCENTILE", colnames(select_if(., is.numeric)))
+  meta <- rename(fdf, ID=X) %>%
+    select(ID, MODE, DIVISION, SUPERCLASS, CLASS)
+  # TODO: Some results don't contain the orig data frame (we didn't use
+  # to need it until we started computing correlated features in the
+  # loadings table, and we've since used it for other purposes as well).
+  # Ideally, we should fix that, but until that happens, the following
+  # if-expression will prevent us from failing when loading these older
+  # data sets.
+  norm <- if (is.null(orig)) {
+    NULL
+  } else {
+    mutate(orig, ID=row.names(orig)) %>%
+      mutate_if(is.numeric, funs(ntile(., n=100))) %>%
+      left_join(meta, by="ID") %>%
+      select(ID, MODE, DIVISION, SUPERCLASS, CLASS, everything()) %>%
+      # TODO: use gather_if when available
+      gather("FEAT", "PERCENTILE", colnames(select_if(., is.numeric)))
+  }
 
   feat_crit_table <- data.frame(env$fit$loadings[,], h2 = env$fit$communality, comp = env$fit$complexity)
   feat_crit_table <- rownames_to_column(feat_crit_table, var="Feature")

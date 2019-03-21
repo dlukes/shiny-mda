@@ -259,7 +259,18 @@ function(input, output, session) {
     thresh <- input$thresh
     showfactors <- input$showfactors
     req(thresh, showfactors)
-    ldf <- add_correlated_feats(data$ldf, data$orig, input$cor_feat_thresh)
+    # TODO: remove this if we ever fix all data sets to actually include
+    # the orig data frames
+    ldf <- if (is.null(data$orig)) {
+      showNotification(
+        "Can't compute correlated features, this data set does not contain the original data frame with feature values.",
+        type="warning",
+        duration=NULL
+      )
+      data$ldf
+    } else {
+      add_correlated_feats(data$ldf, data$orig, input$cor_feat_thresh)
+    }
     ldf$Loading <- round(ldf$Loading, 2)
     filter(ldf, (Loading <= thresh[1] | Loading >= thresh[2]) & Factor %in% showfactors) %>%
       spread(Factor, Loading) %>%
@@ -480,6 +491,12 @@ function(input, output, session) {
 
   topFeatsPerDimReactive <- reactive({
     data <- data()
+    # TODO: remove this if we ever fix all data sets to actually include
+    # the orig data frames (based on which the norm data frame is
+    # computed)
+    shiny::validate(
+      need(data$norm, "Can't show top features, this data set does not contain the original data frame with feature values.")
+    )
     top_feature_boxplot(
       data$norm,
       data$ldf,
