@@ -58,7 +58,7 @@ cluster_info <- function(factors_clusters, cluster, topn=5) {
     unite(Category, DIVISION, SUPERCLASS, CLASS, sep="-") %>%
     count(Category, sort=TRUE) %>%
     mutate(`%`=percent(n / sum(n), accuracy=1)) %>%
-    top_n(topn)
+    head(topn)
 }
 
 cluster_sizes <- function(factors_clusters) {
