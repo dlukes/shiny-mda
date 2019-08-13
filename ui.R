@@ -1,8 +1,8 @@
 function(request) {
   fresults <- lsResults()
-  init_model <- fresults["2017-12-05_8f"]
+  init_model <- fresults[default_model]
   fresults_names <- names(fresults)
-  init_model_seq <- grep("2017-09-18_", fresults_names, value=TRUE)
+  init_model_seq <- grep(default_model_seq, fresults_names, value=TRUE)
 
   fluidPage(
     titlePanel("MDAvis"),

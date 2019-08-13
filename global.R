@@ -47,6 +47,9 @@ theme_set(theme_bw(base_size=18))
 feat2desc <- read_csv("./conf/feat2desc.csv")
 globalMeta <- read_delim("./conf/koditex-metadata.csv", delim="\t")
 
+default_model <- "2017-12-05_8f"
+default_model_seq <- "2017-09-18_"
+
 lsResults <- function() {
   results <- sort(list.files("results", pattern="\\.RData$", full.names=TRUE), decreasing=TRUE)
   names(results) <- tools::file_path_sans_ext(basename(results))
