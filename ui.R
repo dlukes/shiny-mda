@@ -1,5 +1,6 @@
 function(request) {
   fresults <- lsResults()
+  init_model <- fresults["2017-12-05_8f"]
   fresults_names <- names(fresults)
   init_model_seq <- grep("2017-09-18_", fresults_names, value=TRUE)
 
@@ -16,7 +17,7 @@ function(request) {
           bookmarkButton(),
           conditionalPanel(condition="input.tabsetPanel != 'MultiModelCmp'",
             fileInput("rdata", "Upload your own data:", accept=".RData"),
-            selectInput("results", "Results:", choices=fresults, selected=fresults[1])
+            selectInput("results", "Results:", choices=fresults, selected=init_model)
           ),
           conditionalPanel(condition="/^Factors/.test(input.tabsetPanel)",
             selectInput("fx", "X axis:", choices=c()),
