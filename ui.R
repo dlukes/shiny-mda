@@ -97,7 +97,7 @@ function(request) {
               sliderInput("top_feats_per_dim_thresh", "Loading threshold:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
             ),
             textInput("top_feats_per_dim_chunk_id", "Chunk ID:"),
-            textInput("top_feats_per_dim_meta_regex", "Show classes matching regex:")
+            textInput("top_feats_per_dim_meta_regex", "Show classes matching regex:", placeholder="e.g. ^spo-")
           ),
           conditionalPanel(condition="input.tabsetPanel == 'Text Types'",
             sliderInput("cluster_k", "Number of clusters:", 3, 15, 10, 1),
