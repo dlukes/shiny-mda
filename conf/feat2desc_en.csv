@@ -1,0 +1,127 @@
+Feature,Description,Category,Subcategory
+AAV,verbal adjectives,Derivation,NA
+ABS,abstract nouns,Derivation,NA
+ASIM,adjectives denoting similarity,Derivation,NA
+DEMI,nouns: diminutives,Derivation,NA
+GRAAA,adjectives: analytic gradation,Derivation,NA
+GRAD,adjectives: gradation (comparative + superlative),Derivation,NA
+GRADD,adverbs: gradation (comparative + superlative),Derivation,NA
+NNV,verbal nouns,Derivation,NA
+POS,possessive adjectives,Derivation,NA
+AA,adjectives,Lexicon,NA
+ARCH,archaic function words and adverbs,Lexicon,NA
+CONJI,repertoire of conjunctions,Lexicon,NA
+DB,adverbs,Lexicon,NA
+DEM,"demonstrative pronouns (excl. 'to')",Lexicon,NA
+DEMD,demonstrative adverbs,Lexicon,NA
+DI,indefinite adverbs,Lexicon,NA
+DP,locative adverbs,Lexicon,NA
+DT,adverbs of time,Lexicon,NA
+FNW,"function words (pron., num., prep., conj. & part.)",Lexicon,NA
+GENL,lexical markers of feminine gender,Lexicon,NA
+IND,indefinite pronouns,Lexicon,NA
+INT,interjections,Lexicon,NA
+MOD,modality,Lexicon,NA
+NN,nouns,Lexicon,NA
+NUM,numerals,Lexicon,NA
+P1P,1st person pronouns (personal + possessive),Lexicon,NA
+P2P,2nd person pronouns (personal + possessive),Lexicon,NA
+P3P,3rd person pronouns (personal + possessive),Lexicon,NA
+PAJ,semantically bleached adjectives,Lexicon,NA
+PAV,semantically bleached adverbs,Lexicon,NA
+POE,poetic words,Lexicon,NA
+POSP,possessive pronouns,Lexicon,NA
+PP,pronouns,Lexicon,NA
+PPI,repertoire of pronouns,Lexicon,NA
+PREI,repertoire of prepositions,Lexicon,NA
+PSB,semantically bleached nouns,Lexicon,NA
+PVB,semantically bleached verbs,Lexicon,NA
+RST,restrictors,Lexicon,NA
+TIME,time expressions,Lexicon,NA
+VB,verbs,Lexicon,NA
+VD,reporting verbs (verba dicendi),Lexicon,NA
+VTS,thinking and reporting verbs,Lexicon,NA
+VUL,profanities (vulgar language),Lexicon,NA
+ADN,adjectives with noun declension,Morphology,NA
+AMA,instr. pl. nouns: -ma ending,Morphology,NA
+BYTS,aux. verb být as -s suffix,Morphology,NA
+CAS,nominal cases with prepositions,Morphology,NA
+DAT,nouns: dative,Morphology,NA
+DROP,pronoun non-dropping,Morphology,NA
+GEN,nouns: genitive,Morphology,NA
+GENG,morphological markers of feminine gender,Morphology,NA
+ICI,verbs: infinitive form with -ci ending,Morphology,NA
+IEK,nom. pl. nouns: -é vs. -i endings,Morphology,NA
+INS,nouns: instrumental,Morphology,NA
+LOK,nouns: locative,Morphology,NA
+NAKK,nouns: nominative-accusative,Morphology,NA
+NEG1,sentence negation,Morphology,NA
+NEG2,lexical negation,Morphology,NA
+NEG4,constituent negation,Morphology,NA
+SGPL,nouns: singular vs. plural,Morphology,NA
+VAS,verbal aspect (perfective),Morphology,NA
+VCO,verbs: conditional,Morphology,NA
+VF,finite verbs,Morphology,NA
+VIM,verbs: imperative forms,Morphology,NA
+VIN,verbs: indicative forms,Morphology,NA
+VOC,nouns: vocative,Morphology,NA
+VPE1,verbs: 1st person,Morphology,NA
+VPE2,verbs: 2nd person,Morphology,NA
+VTE1,verbs: past tense,Morphology,NA
+VTE2,verbs: present tense,Morphology,NA
+VTE3,verbs: future tense,Morphology,NA
+VVO,genus verbi – passive voice,Morphology,NA
+FEI,narrowing é > í/ý in the root of words,Phonology,NA
+FEIK,narrowing é > í/ý in endings,Phonology,NA
+FYEJ,vowel breaking ý > ej in the root of words,Phonology,NA
+FYEJK,vowel breaking ý > ej in endings,Phonology,NA
+PROTV,v-prothesis,Phonology,NA
+WL,average word length (number of syllables),Phonology,NA
+ZKR,contracted forms,Phonology,NA
+AMP,intensifiers/boosters,Pragmatics,NA
+DOWN,downtoners/hedges,Pragmatics,NA
+EXC,exclamation mark,Pragmatics,NA
+EXP,expressive particles,Pragmatics,NA
+IT,"polyfunctional pronoun to ‘it’",Pragmatics,NA
+KONT,contact expressions,Pragmatics,NA
+NGR,frequent n-grams,Pragmatics,NA
+PROPA,proper nouns: people,Pragmatics,NA
+PROPT,proper nouns: places,Pragmatics,NA
+VYPW,fillers,Pragmatics,NA
+ACM,predicative adjectives complemented by a clause,Syntax,NA
+ATA1,noun pre-modifiers with agreement,Syntax,NA
+ATA21,bare noun post-modifiers with agreement,Syntax,NA
+ATA22,complex noun post-modifiers with agreement,Syntax,NA
+CIR124,circumstantial connectives,Syntax,NA
+CIR3,concessive and adversative connectives,Syntax,NA
+CLUA,adjective clusters,Syntax,NA
+CLUAC,clusters of same-case adjectives,Syntax,NA
+CLUAD,adverb clusters,Syntax,NA
+CLUN,noun clusters,Syntax,NA
+CLUNC,clusters of same-case nouns,Syntax,NA
+COH1,paratactic correlative conjunctions,Syntax,NA
+CONJ,conjunctions,Syntax,NA
+COOR,coordination,Syntax,NA
+CORR,hypotactic correlative connectives,Syntax,NA
+CPD,clauses with wh-adverbs,Syntax,NA
+NEG3,multiple negation (in one sentence),Syntax,NA
+PA,predicative adjectives,Syntax,NA
+PN,predicative nouns,Syntax,NA
+PRE,prepositions,Syntax,NA
+PRE2,complex prepositions,Syntax,NA
+REL1,relative subordinate clauses: type jenž,Syntax,NA
+REL2,relative subordinate clauses: type který,Syntax,NA
+REL3,relative subordinate clauses: type co,Syntax,NA
+SER,sentence relatives,Syntax,NA
+SL,average sentence length (in number of words),Syntax,NA
+STA4,nominal post-modifiers without agreement,Syntax,NA
+VCM,(verbal) predicate complemented by a clause,Syntax,NA
+BIG,bigrams,Text,NA
+COH2,text organizing particles,Text,NA
+LR,"Yule’s K – lexical repetitiveness",Text,NA
+PHRA,phraseology,Text,NA
+QUE1,non-polar questions,Text,NA
+QUE2,questions (all types),Text,NA
+REP,word repetition,Text,NA
+TC,thematic concentration of text,Text,NA
+UNG,unigrams,Text,NA
