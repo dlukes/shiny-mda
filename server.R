@@ -44,6 +44,11 @@ cmpDataDrivenUIUpdate <- function(session, dimB) {
 
 function(input, output, session) {
   if (!init_shiny_cnc("mda")) return()
+  lang <- get_lang(session)
+  if (!lang %in% c("cs", "en")) {
+    lang <- "en"
+  }
+  feat2desc <- read_csv(paste0("./conf/feat2desc_", lang, ".csv"))
 
   ###################################################################################################
   # DATA

@@ -44,7 +44,6 @@ palette <- c(
 shapes <- c(16, 17, 15, 18)
 lines <- c("solid", "longdash", "dotted", "dotdash")
 theme_set(theme_bw(base_size=18))
-feat2desc <- read_csv("./conf/feat2desc.csv")
 globalMeta <- read_delim("./conf/koditex-metadata.csv", delim="\t")
 
 results <- "results/2017-12-05_8f.RData"
