@@ -1,4 +1,3 @@
-library(jsonlite)
 library(ggplot2)
 library(Cairo)  # For nicer ggplot2 output when deployed on Linux
 
@@ -9,8 +8,6 @@ library(tidyr)
 library(dplyr)
 
 library(shinyBS)
-
-enableBookmarking("server")
 
 palette <- c(
   "#191919",

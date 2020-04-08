@@ -23,7 +23,6 @@ function(request) {
         width=2,
         div(
           id="controls-inner",
-          bookmarkButton(),
           selectInput("results", "Results:", choices=fresults, selected=init_model),
           conditionalPanel(condition="/^Factors/.test(input.tabsetPanel)",
             selectInput("fx", "X axis:", choices=c()),

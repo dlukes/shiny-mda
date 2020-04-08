@@ -8,7 +8,6 @@ source("feat_crit.R", local=TRUE)
 source("top_features_per_dim.R", local=TRUE)
 
 ltable_js <- DT::JS(read_file("./www/loadingsTable.js"))
-ltable_state_default <- DT::JS("function(settings, data) { return false; }")
 
 null2empty_list <- function(inp) {
   if (is.null(inp)) {
@@ -19,8 +18,7 @@ null2empty_list <- function(inp) {
 }
 
 # The following two functions encapsulate all changes to the UI that are
-# driven by input data, which means they need special treatment w.r.t.
-# bookmarking.
+# driven by input data.
 
 dataDrivenUIUpdate <- function(
   session, mode, division, fx, fy, showfactors, dimA, feat_crit_dim
@@ -28,7 +26,7 @@ dataDrivenUIUpdate <- function(
   # NOTE: When no option is selected in a checkbox group, Shiny represents
   # this as NULL. Unfortunately, the update functions below simply ignore
   # NULL arguments, so we have to manually convert possible NULLs into
-  # empty lists. This is necessary for bookmarking to work properly.
+  # empty lists.
   selected_modes <- null2empty_list(mode[[2]])
   updateCheckboxGroupInput(session, "mode", choices=mode[[1]], selected=selected_modes)
   selected_divisions <- null2empty_list(division[[2]])
@@ -74,39 +72,6 @@ function(input, output, session) {
       dimB=list(ans$ffactors, ans$ffactors[1])
     )
     ans
-  })
-
-  ###################################################################################################
-  # BOOKMARKING
-
-  # NOTE (#DTState 1/3): stateSave must be enabled in the DataTable options in order for the
-  # corresponding input storing the state to be populated, but we don't actually want DT state to be
-  # restored whenever the same user reopens the app (we just want to save the state for bookmarking
-  # purposes), so by default, we override the callback restoring the state so that the stored state
-  # is ignored
-  session$userData$ltable_state <- ltable_state_default
-  onRestore(function(state) {
-    # NOTE (#DTState 2/3): only when restoring state from a bookmarked session do we allow the saved
-    # state to be applied to the DataTable
-    session$userData$ltable_state <- DT::JS(paste0(
-      "function() {\n",
-      "return ", toJSON(state$input$ltable_state, auto_unbox=TRUE), ";\n",
-      "}"
-    ))
-  })
-  onRestored(function(state) {
-    dataDrivenUIUpdate(session,
-      mode=list(NULL, state$input$mode),
-      division=list(NULL, state$input$division),
-      fx=list(NULL, state$input$fx),
-      fy=list(NULL, state$input$fy),
-      showfactors=list(NULL, state$input$showfactors),
-      dimA=list(NULL, state$input$dimA),
-      feat_crit_dim=list(NULL, state$input$feat_crit_dim)
-    )
-    cmpDataDrivenUIUpdate(session,
-      dimB=list(NULL, state$input$dimB)
-    )
   })
 
   ###################################################################################################
@@ -245,10 +210,6 @@ function(input, output, session) {
                   select=FALSE,
                   rowCallback=ltable_js
                 ))
-    # NOTE (#DTState 3/3): once a saved state from a bookmark has been used to restore the
-    # datatable, discard it, or else it'll come back to haunt the user (= get re-applied whenever
-    # the datatable generation code is re-run)
-    session$userData$ltable_state <- ltable_state_default
     dt
   })
 
