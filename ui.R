@@ -1,3 +1,13 @@
+help_popover_counter <- 1
+help_popover <- function(content, title = NULL) {
+  id <- paste0("mdavis-help-popover-", help_popover_counter)
+  help_popover_counter <<- help_popover_counter + 1
+  tagList(
+    bsButton(id, label = "", icon = icon("question"), style = "info", size = "extra-small"),
+    bsPopover(id, title = title, content = content, trigger = "click", placement = "right")
+  )
+}
+
 function(request) {
   fresults <- lsResults()
   init_model <- fresults[default_model]
@@ -34,9 +44,27 @@ function(request) {
               column(6, checkboxGroupInput("mode", "Mode:", choices=c())),
               column(6, checkboxGroupInput("division", "Division:", choices=c()))
             ),
-            h4("Selected chunk:"),
+            h4(
+              help_popover(paste(
+                "Click on a point to select it and display its metadata.",
+                "Click and drag to create a region, double-click on it to zoom in.",
+                "Double-click again to zoom back out."
+              )),
+              "Selected chunk:"
+            ),
             htmlOutput("click_info"),
-            textInput("cql", "CQL:", value='[lemma=".*"]'),
+            textInput(
+              "cql",
+              tagList(
+                help_popover(paste(
+                   "When a point is selected, enter a CQL query and hit Search",
+                   "to open KonText and search for matches in the corresponding",
+                   "chunk in the Koditex corpus."
+                )),
+                "CQL:"
+              ),
+              value='[lemma=".*"]'
+            ),
             actionButton("search", "Search", onclick="kontextSearch()")
           ),
           conditionalPanel(condition="input.tabsetPanel == 'Factors Boxplots'",

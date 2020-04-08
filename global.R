@@ -8,6 +8,8 @@ library(tibble)
 library(tidyr)
 library(dplyr)
 
+library(shinyBS)
+
 enableBookmarking("server")
 
 palette <- c(
