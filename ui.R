@@ -9,10 +9,6 @@ help_popover <- function(content, title = NULL) {
 }
 
 function(request) {
-  fresults <- lsResults()
-  init_model <- fresults[default_model]
-  fresults_names <- names(fresults)
-
   fluidPage(
     titlePanel("MDAvis"),
     tags$head(tags$link(rel="stylesheet", type="text/css", href="mda.css")),
@@ -23,7 +19,6 @@ function(request) {
         width=2,
         div(
           id="controls-inner",
-          selectInput("results", "Results:", choices=fresults, selected=init_model),
           conditionalPanel(condition="/^Factors/.test(input.tabsetPanel)",
             selectInput("fx", "X axis:", choices=c()),
             selectInput("fy", "Y axis:", choices=c())
@@ -97,7 +92,6 @@ function(request) {
             actionButton("subcorp2", "Specify Subcorpus 2")
           ),
           conditionalPanel(condition="input.tabsetPanel == 'LoadingsCmp'",
-            selectInput("cmp_results", "Compare with:", choices=fresults, selected=fresults[2]),
             selectInput("dimB", "Dimension B:", choices=c()),
             div(
               class="outer-range-wrapper",

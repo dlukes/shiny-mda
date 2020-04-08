@@ -48,7 +48,7 @@ function(input, output, session) {
   # DATA
 
   data <- reactive({
-    ans <- loadData(input$results)
+    ans <- loadData(results)
 
     first_factor_init <- list(ans$ffactors, ans$ffactors[1])
     second_factor_init <- list(ans$ffactors, ans$ffactors[2])
@@ -66,7 +66,7 @@ function(input, output, session) {
   })
 
   cmpData <- reactive({
-    ans <- loadData(input$cmp_results)
+    ans <- loadData(results)
     data <- data()
     cmpDataDrivenUIUpdate(session,
       dimB=list(ans$ffactors, ans$ffactors[1])
