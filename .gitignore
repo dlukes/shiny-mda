@@ -3,3 +3,7 @@
 *.RData
 .Ruserdata
 shiny_bookmarks
+
+packrat/src
+packrat/lib
+packrat/lib-R
