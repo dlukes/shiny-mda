@@ -8,6 +8,7 @@ library(tidyr)
 library(dplyr)
 
 library(shinyBS)
+library(shinyCNC)
 
 palette <- c(
   "#191919",

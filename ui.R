@@ -9,6 +9,9 @@ help_popover <- function(content, title = NULL) {
 }
 
 function(request) {
+  bootstrapPage(
+  shiny_cnc_UI(),
+
   fluidPage(
     titlePanel("MDAvis"),
     tags$head(tags$link(rel="stylesheet", type="text/css", href="mda.css")),
@@ -179,5 +182,6 @@ function(request) {
       )
     ),
     tags$script(src="kontextSearch.js")
+  )
   )
 }

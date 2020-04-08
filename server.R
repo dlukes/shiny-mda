@@ -44,6 +44,8 @@ cmpDataDrivenUIUpdate <- function(session, dimB) {
 }
 
 function(input, output, session) {
+  if (!init_shiny_cnc("mda")) return()
+
   ###################################################################################################
   # DATA
 
