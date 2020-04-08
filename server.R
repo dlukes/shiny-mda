@@ -4,7 +4,6 @@ source("genre_diff.R", local=TRUE)
 source("loadings_cmp.R", local=TRUE)
 source("filterRange_override.R", local=TRUE)
 source("correlated_feats.R", local=TRUE)
-source("feat_crit.R", local=TRUE)
 source("top_features_per_dim.R", local=TRUE)
 
 ltable_js <- DT::JS(read_file("./www/loadingsTable.js"))
@@ -345,13 +344,6 @@ function(input, output, session) {
 
   output$loadingsCmpB <- renderTable({
     loadingsCmpReactive()$onlyB
-  })
-
-  ###################################################################################################
-  # FEATURE CRITIC
-
-  output$featCritPlot <- renderPlot({
-    plotFeatCrit(data()$feat_crit_table, input$feat_crit_dim)
   })
 
   ###################################################################################################

@@ -102,10 +102,8 @@ function(request) {
             ),
             checkboxInput("lc_only_feats_in_both", "Only show features present in both models")
           ),
-          conditionalPanel(condition="['Feature Critic', 'TopFeatsPerDim'].includes(input.tabsetPanel)",
-            selectInput("feat_crit_dim", "Dimension:", choices=c())
-          ),
           conditionalPanel(condition="input.tabsetPanel == 'TopFeatsPerDim'",
+            selectInput("feat_crit_dim", "Dimension:", choices=c()),
             div(
               class="outer-range-wrapper",
               sliderInput("top_feats_per_dim_thresh", "Loading threshold:", min=-1, max=1, step=.05, value=c(-.3, .3), width="100%")
@@ -169,10 +167,6 @@ function(request) {
               tableOutput("loadingsCmpA"),
               h3("… only in dimension B:"),
               tableOutput("loadingsCmpB")
-          ),
-          tabPanel(
-            "Feature Critic",
-            plotOutput("featCritPlot", height="90vh")
           ),
           tabPanel(
             "TopFeatsPerDim",

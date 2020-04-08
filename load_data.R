@@ -50,12 +50,9 @@ loadData <- function(path) {
       gather("FEAT", "PERCENTILE", colnames(select_if(., is.numeric)))
   }
 
-  feat_crit_table <- data.frame(env$fit$loadings[,], h2 = env$fit$communality, comp = env$fit$complexity)
-  feat_crit_table <- rownames_to_column(feat_crit_table, var="Feature")
-
   list(
     ldf=ldf, fdf=fdf, lfactors=lfactors, ffactors=ffactors, modes=modes, divisions=divisions,
-    orig=orig, norm=norm, feat_crit_table=feat_crit_table
+    orig=orig, norm=norm
   )
 }
 
