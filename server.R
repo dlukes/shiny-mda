@@ -1,13 +1,11 @@
 source("load_data.R", local=TRUE)
 source("dim_graph.R", local=TRUE)
 source("genre_diff.R", local=TRUE)
-source("model_cmp.R", local=TRUE)
 source("loadings_cmp.R", local=TRUE)
 source("filterRange_override.R", local=TRUE)
 source("correlated_feats.R", local=TRUE)
 source("feat_crit.R", local=TRUE)
 source("top_features_per_dim.R", local=TRUE)
-source("text_types.R", local=TRUE)
 
 ltable_js <- DT::JS(read_file("./www/loadingsTable.js"))
 ltable_state_default <- DT::JS("function(settings, data) { return false; }")
@@ -25,8 +23,7 @@ null2empty_list <- function(inp) {
 # bookmarking.
 
 dataDrivenUIUpdate <- function(
-  session, mode, division, fx, fy, showfactors, dimA, feat_crit_dim,
-  cluster_2D_x, cluster_2D_y, cluster_means_dims
+  session, mode, division, fx, fy, showfactors, dimA, feat_crit_dim
 ) {
   # NOTE: When no option is selected in a checkbox group, Shiny represents
   # this as NULL. Unfortunately, the update functions below simply ignore
@@ -42,9 +39,6 @@ dataDrivenUIUpdate <- function(
   updateCheckboxGroupInput(session, "showfactors", choices=showfactors[[1]], selected=selected_showfactors)
   updateSelectInput(session, "dimA", choices=dimA[[1]], selected=dimA[[2]])
   updateSelectInput(session, "feat_crit_dim", choices=feat_crit_dim[[1]], selected=feat_crit_dim[[2]])
-  updateSelectInput(session, "cluster_2D_x", choices=cluster_2D_x[[1]], selected=cluster_2D_x[[2]])
-  updateSelectInput(session, "cluster_2D_y", choices=cluster_2D_y[[1]], selected=cluster_2D_y[[2]])
-  updateSelectizeInput(session, "cluster_means_dims", choices=cluster_means_dims[[1]], selected=cluster_means_dims[[2]])
 }
 
 cmpDataDrivenUIUpdate <- function(session, dimB) {
@@ -53,27 +47,10 @@ cmpDataDrivenUIUpdate <- function(session, dimB) {
 
 function(input, output, session) {
   ###################################################################################################
-  # INPUT DEBOUNCING
-
-  model_seq_d <- debounce(reactive(input$model_seq), 1000)
-  mmc_feat_set_d <- debounce(reactive(input$mmc_feat_set), 1000)
-  mmc_feats_from_mod_d <- debounce(reactive(input$mmc_feats_from_mod), 1000)
-  mmc_feats_from_dim_d <- debounce(reactive(input$mmc_feats_from_dim), 1000)
-  mmc_feats_thresh_d <- debounce(reactive(input$mmc_feats_thresh), 1000)
-
-  ###################################################################################################
   # DATA
 
   data <- reactive({
-    if (is.null(input$rdata)) {
-      rdata <- input$results
-      # name <- rdata
-    } else {
-      rdata <- input$rdata$datapath
-      # name <- input$rdata$name
-    }
-
-    ans <- loadData(rdata)
+    ans <- loadData(input$results)
 
     first_factor_init <- list(ans$ffactors, ans$ffactors[1])
     second_factor_init <- list(ans$ffactors, ans$ffactors[2])
@@ -84,10 +61,7 @@ function(input, output, session) {
       fy=second_factor_init,
       showfactors=list(ans$lfactors, ans$lfactors),
       dimA=first_factor_init,
-      feat_crit_dim=first_factor_init,
-      cluster_2D_x=first_factor_init,
-      cluster_2D_y=second_factor_init,
-      cluster_means_dims=list(ans$ffactors, ans$ffactors[1:2])
+      feat_crit_dim=first_factor_init
     )
 
     ans
@@ -101,20 +75,6 @@ function(input, output, session) {
     )
     ans
   })
-
-  multiData <- reactivePoll(5000, session,
-    checkFunc=lsResults,
-    valueFunc=function() {
-      results <- lsResults()
-      models <- vector("list", length(results))
-      names(models) <- names(results)
-      for (i in 1:length(results)) {
-        model_path <- results[i]
-        models[[i]] <- loadData(model_path)$ldf
-      }
-      models
-    }
-  )
 
   ###################################################################################################
   # BOOKMARKING
@@ -142,10 +102,7 @@ function(input, output, session) {
       fy=list(NULL, state$input$fy),
       showfactors=list(NULL, state$input$showfactors),
       dimA=list(NULL, state$input$dimA),
-      feat_crit_dim=list(NULL, state$input$feat_crit_dim),
-      cluster_2D_x=list(NULL, state$input$cluster_2D_x),
-      cluster_2D_y=list(NULL, state$input$cluster_2D_y),
-      cluster_means_dims=list(NULL, state$input$cluster_means_dims)
+      feat_crit_dim=list(NULL, state$input$feat_crit_dim)
     )
     cmpDataDrivenUIUpdate(session,
       dimB=list(NULL, state$input$dimB)
@@ -400,17 +357,6 @@ function(input, output, session) {
   })
 
   ###################################################################################################
-  # MODEL COMPARISON
-
-  output$modelCmpPlot <- renderPlot({
-    mname1 <- tools::file_path_sans_ext(basename(input$results))
-    mname2 <- tools::file_path_sans_ext(basename(input$cmp_results))
-    cmpFeats <- modelCmpFeatures(data()$ldf, cmpData()$ldf)
-    cmpChunks <- modelCmpChunks(data()$fdf, cmpData()$fdf)
-    plotModelCmp(bind_rows(cmpFeats, cmpChunks), mname1, mname2)
-  })
-
-  ###################################################################################################
   # LOADINGS COMPARISON
 
   loadingsCmpReactive <- reactive({
@@ -436,60 +382,6 @@ function(input, output, session) {
 
   output$loadingsCmpB <- renderTable({
     loadingsCmpReactive()$onlyB
-  })
-
-  ###################################################################################################
-  # MULTI-MODEL COMPARISON
-
-  multiModelCmpReactive <- reactive({
-    model_seq <- model_seq_d()
-    shiny::validate(
-      need(
-        length(model_seq) > 1,
-        "Please specify at least two models in the sequence!"
-      )
-    )
-    multi_data <- multiData()
-    feats_from_mod <- mmc_feats_from_mod_d()
-    feats_from_dim <- mmc_feats_from_dim_d()
-    feat_set <- if (!is.null(feats_from_mod) && !is.null(feats_from_dim)) {
-      feats_thresh <- mmc_feats_thresh_d()
-      tmp <- bind_rows(multi_data[feats_from_mod]) %>%
-        filter(
-          grepl(sprintf("%s$", feats_from_dim), Factor) &
-            (Loading <= feats_thresh[1] | Loading >= feats_thresh[2])
-        )
-      unique(c(as.character(tmp$Feature), mmc_feat_set_d()))
-    } else {
-      mmc_feat_set_d()
-    }
-    models <- multi_data[model_seq]
-    res <- multiModelCmp(models, featSet=feat_set)
-    list(mmc=res$models, feat_set=length(feat_set) > 0, details=res$details)
-  })
-
-  output$multiModelCmpPlot <- renderPlot({
-    mmc <- multiModelCmpReactive()
-    plotMultiModelCmp(mmc$mmc, featSet=mmc$feat_set)
-  })
-
-  output$multiModelCmpDetails <- renderTable({
-    details <- multiModelCmpReactive()$details
-    m1 <- input$mmc_dets_m1
-    m2 <- input$mmc_dets_m2
-    if (nrow(details) > 0 && m1 %in% details$ModelName1 && m2 %in% details$ModelName2) {
-      desc <- select(feat2desc, Feature, Description)
-      details <- filter(details, ModelName1 == m1 & ModelName2 == m2) %>%
-        top_n(input$mmc_dets_top, abs(LoadProd)) %>%
-        arrange(Feature) %>%
-        spread(Factors, LoadProd) %>%
-        select(-ModelName1, -ModelName2) %>%
-        left_join(desc) %>%
-        select(Feature, Description, everything())
-    } else {
-      details <- tibble()
-    }
-    details
   })
 
   ###################################################################################################
@@ -530,23 +422,4 @@ function(input, output, session) {
     height=function() {
       300*topFeatsPerDimReactive()$nrow
   })
-
-  ###################################################################################################
-  # TEXT TYPES
-
-  factorsClustersReactive <- reactive({
-    add_clusters(data()$fdf, input$cluster_k)
-  })
-  output$cluster2DPlot <- renderPlot(
-    cluster_2D_plot(factorsClustersReactive(), dim_x=input$cluster_2D_x, dim_y=input$cluster_2D_y, a=input$cluster_2D_a)
-  )
-  output$clusterMeansPlot <- renderPlot(
-    cluster_means_plot(factorsClustersReactive(), dims=input$cluster_means_dims)
-  )
-  output$clusterInfo <- renderTable(
-    cluster_info(factorsClustersReactive(), cluster=input$cluster_info_cluster, topn=input$cluster_info_topn)
-  )
-  output$clusterSizes <- renderTable(
-    cluster_sizes(factorsClustersReactive())
-  )
 }
