@@ -500,6 +500,7 @@ function(input, output, session) {
     top_feature_boxplot(
       data$norm,
       data$ldf,
+      feat2desc,
       input$feat_crit_dim,
       top_feats_per_dim_thresh_d(),
       top_feats_per_dim_chunk_id_d(),

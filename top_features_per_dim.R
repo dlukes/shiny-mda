@@ -1,13 +1,14 @@
 # Usage example:
 # source("load_data.R")
+# feat2desc <- read_csv("conf/feat2desc_cs.csv")
 # data <- loadData("results/2018-11-14_8f.RData")
-# lst <- top_feature_boxplot(data$norm, data$ldf, chunk_id="_metodickyp_0")
+# lst <- top_feature_boxplot(data$norm, data$ldf, feat2desc, chunk_id="_metodickyp_0")
 # print(lst$plot)
 
 library(ggplot2)
 library(dplyr)
 
-feats_above_thresh <- function(ldf, dimname, thresh) {
+feats_above_thresh <- function(ldf, dimname, thresh, feat2desc) {
   filter(ldf, Factor == dimname & (Loading < thresh[1] | Loading > thresh[2])) %>%
     mutate(Feature=as.character(Feature)) %>%
     arrange(desc(Loading)) %>%
@@ -25,10 +26,10 @@ feats_above_thresh <- function(ldf, dimname, thresh) {
     as_tibble()
 }
 
-top_feature_boxplot <- function(norm_df, ldf, dimname="GLS1", thresh=c(-3, .3), chunk_id="", meta_regex="") {
+top_feature_boxplot <- function(norm_df, ldf, feat2desc, dimname="GLS1", thresh=c(-3, .3), chunk_id="", meta_regex="") {
   chunk_id <- trimws(chunk_id)
   meta_regex <- trimws(meta_regex)
-  top_feats <- feats_above_thresh(ldf, dimname, thresh)
+  top_feats <- feats_above_thresh(ldf, dimname, thresh, feat2desc)
   full_df <- filter(norm_df, FEAT %in% top_feats$Feature) %>%
     mutate(FEAT=factor(FEAT, levels=top_feats$Feature, labels=top_feats$Label))
   if (meta_regex == "") {
