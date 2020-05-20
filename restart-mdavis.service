@@ -1,0 +1,10 @@
+[Unit]
+# change description to match your app
+Description=Restart MDAvis: Visualize MDA results
+
+[Service]
+Type=oneshot
+# change last argument to match the service you want to restart
+ExecStart=/bin/systemctl restart mdavis
+
+# vim: set ft=systemd:

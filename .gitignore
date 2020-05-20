@@ -5,5 +5,4 @@
 shiny_bookmarks
 
 packrat/src
-packrat/lib
-packrat/lib-R
+packrat/lib*/
