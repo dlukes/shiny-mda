@@ -395,6 +395,12 @@ Hash: a48cf01573400333efa51dc999ab6447
 Requires: R6, crayon, digest, htmltools, httpuv, jsonlite, later, mime,
     promises, rlang, sourcetools, xtable
 
+Package: shinyBS
+Source: CRAN
+Version: 0.61
+Hash: 4644935bd93e62a0b82686b26af7efc2
+Requires: htmltools, shiny
+
 Package: shinyCNC
 Source: CNCRAN
 Version: 0.1.1
