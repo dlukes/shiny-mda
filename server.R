@@ -300,7 +300,24 @@ function(input, output, session) {
 
   genreDiffVals <- reactiveValues(subcorp1=NULL, subcorp2=NULL)
 
-  subcorpModal <- function(subcorp, meta=globalMeta, selected=list(), force_include=FALSE) {
+  # globalMeta only contains Koditex chunks and their metadata; this adds any
+  # additional chunks and their MODE and DIVISION metadata found in the current
+  # results
+  globalAndResultsMeta <- reactive({
+    fdf <- data()$fdf
+    non_koditex_ids <- setdiff(rownames(fdf), globalMeta$id)
+    non_koditex_chunks <- fdf[non_koditex_ids, ] %>%
+      rownames_to_column("id") %>%
+      select(id, mode=MODE, division=DIVISION_ORIG)
+    # consider all additional chunks extracted from results as include=yes,
+    # otherwise the user would have to change this manually every time, because
+    # we want to keep force_include=TRUE for Koditex data
+    non_koditex_chunks$include <- "yes"
+    bind_rows(globalMeta, non_koditex_chunks) %>%
+      replace(is.na(.), "-NA-")
+  })
+
+  subcorpModal <- function(subcorp, meta, selected=list(), force_include=FALSE) {
     if (force_include) selected$include = "yes"
     categories <- colnames(meta) %>%
       purrr::discard(~ .x == "id") %>%
@@ -330,7 +347,7 @@ function(input, output, session) {
   }
 
   doSubcorpSelection <- function(subcorp) {
-    meta <- globalMeta
+    meta <- globalAndResultsMeta()
     chboxes <- grep(paste0("CheckboxSubcorp", subcorp), names(input), value=TRUE)
     selectedList <- list()
     for (chbox in chboxes) {
@@ -364,8 +381,8 @@ function(input, output, session) {
     removeModal()
   }
 
-  observeEvent(input$subcorp1, showModal(subcorpModal(1, force_include=TRUE)))
-  observeEvent(input$subcorp2, showModal(subcorpModal(2, force_include=TRUE)))
+  observeEvent(input$subcorp1, showModal(subcorpModal(1, globalAndResultsMeta(), force_include=TRUE)))
+  observeEvent(input$subcorp2, showModal(subcorpModal(2, globalAndResultsMeta(), force_include=TRUE)))
   observeEvent(input$refineSubcorpSelection1, showModal(refineSubcorpModal(1)))
   observeEvent(input$refineSubcorpSelection2, showModal(refineSubcorpModal(2)))
   observeEvent(input$okSubcorp1, confirmSubcorp(1))

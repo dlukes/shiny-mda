@@ -12,16 +12,15 @@ loadData <- function(path) {
   orig <- env$res.data
 
   fdf <- env$factors
+  fdf$DIVISION_ORIG <- as.factor(fdf$DIVISION)
   # expand division label to make it more intuitive
   fdf$DIVISION <- paste(as.character(fdf$MODE), as.character(fdf$DIVISION), sep="-")
-  # coerce metadata to factors
-  fdf$MODE <- as.factor(fdf$MODE)
-  fdf$DIVISION <- as.factor(fdf$DIVISION)
+  # coerce metadata to factors; reorder MODE and DIVISION levels so that any
+  # additional non-Koditex data goes last to keep original visuals
+  fdf$MODE <- as.factor(fdf$MODE) %>% orig_levels_first()
+  fdf$DIVISION <- as.factor(fdf$DIVISION) %>% orig_levels_first()
   fdf$SUPERCLASS <- as.factor(fdf$SUPERCLASS)
   fdf$CLASS <- as.factor(fdf$CLASS)
-  # reorder levels so that cpact* goes last to keep original visuals
-  fdf$MODE <- orig_levels_first(fdf$MODE)
-  fdf$DIVISION <- orig_levels_first(fdf$DIVISION)
   fdf$X <- row.names(fdf)
   ffactors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(fdf), value=TRUE, invert=TRUE)
   modes <- levels(fdf$MODE)

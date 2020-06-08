@@ -64,8 +64,8 @@ modelCmpFeatures <- function(ldf1, ldf2) {
 }
 
 modelCmpChunks <- function(fdf1, fdf2) {
-  fdf1 = select(fdf1, -MODE, -DIVISION, -SUPERCLASS, -CLASS, -X)
-  fdf2 = select(fdf2, -MODE, -DIVISION, -SUPERCLASS, -CLASS, -X)
+  fdf1 = select(fdf1, -MODE, -DIVISION, -DIVISION_ORIG, -SUPERCLASS, -CLASS, -X)
+  fdf2 = select(fdf2, -MODE, -DIVISION, -DIVISION_ORIG, -SUPERCLASS, -CLASS, -X)
   cormat = initCormat()
   for(f1 in colnames(fdf1)) {
     val1 = data.frame(Chunk = rownames(fdf1), load = fdf1[,f1])
