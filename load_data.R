@@ -12,6 +12,7 @@ loadData <- function(path) {
   orig <- env$res.data
 
   fdf <- env$factors
+  ffactors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(fdf), value=TRUE, invert=TRUE)
   fdf$DIVISION_ORIG <- as.factor(fdf$DIVISION)
   # expand division label to make it more intuitive
   fdf$DIVISION <- paste(as.character(fdf$MODE), as.character(fdf$DIVISION), sep="-")
@@ -22,7 +23,6 @@ loadData <- function(path) {
   fdf$SUPERCLASS <- as.factor(fdf$SUPERCLASS)
   fdf$CLASS <- as.factor(fdf$CLASS)
   fdf$X <- row.names(fdf)
-  ffactors <- grep("^(X|MODE|DIVISION|SUPERCLASS|CLASS)$", colnames(fdf), value=TRUE, invert=TRUE)
   modes <- levels(fdf$MODE)
   divisions <- levels(fdf$DIVISION)
 
