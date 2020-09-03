@@ -37,27 +37,33 @@ DimDraw <- function(data, factor.name = "GLS1", low.perc = 0.3, up.perc = 0.7, c
 
   colnames(selected) = c("CAT", "Median")
   selected = selected[ order(selected$Median), ]
-  # print(selected)
-  # palette vector must be unnamed, else ggplot2 tries to use the names to match colors to values
-  if (is.null(col.palette)) col.palette <- unname(polychrome(nrow(selected)))
   data.melt.sel = subset(data.melt, CAT %in% selected$CAT)
   data.melt.sel$CAT = droplevels(data.melt.sel$CAT)
   data.melt.sel$Desc = droplevels(data.melt.sel$Desc)
   data.melt.sel$CAT = factor(data.melt.sel$CAT, levels = selected$CAT)
   data.melt.sel$Desc = factor(data.melt.sel$Desc, levels = addDesc(selected$CAT))
   plot = ggplot(data.melt.sel, aes(x = CAT, y = value)) +
-    geom_boxplot(aes(fill = CAT)) +
-    # geom_hline(yintercept = 0) +
     labs(x = "Metadata", y = "Factor value", title = paste("Scores for", factor.name)) +
-    scale_fill_manual(
-                     breaks = selected$CAT,
-                     labels = addDesc(selected$CAT),
-                     values = col.palette,
-                     name = "Text categories") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+  # palette vector must be unnamed, else ggplot2 tries to use the names to match colors to values
+  if (is.null(col.palette)) col.palette <- unname(polychrome(nrow(selected)))
+  if (length(col.palette) == nrow(selected)) {
+    plot = plot + scale_fill_manual(
+      breaks = selected$CAT,
+      labels = addDesc(selected$CAT),
+      values = col.palette,
+      name = "Text categories"
+    ) +
+      geom_boxplot(aes(fill = CAT))
+  } else {
+    plot = plot + geom_boxplot()
+  }
+
   if (below.zero > 0) {
     plot = plot + geom_vline(xintercept = below.zero + .5, linetype = "dotted")
   }
+
   plot
 }
 
