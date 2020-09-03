@@ -70,7 +70,18 @@ function(request) {
           conditionalPanel(condition="input.tabsetPanel == 'Factors Boxplots'",
             div(
               class="outer-range-wrapper",
-              sliderInput("perc", "Percentiles:", min=0, max=1, step=.05, value=c(.3, .7), width="100%")
+              sliderInput(
+                "perc",
+                tagList(
+                  help_popover(paste(
+                    "If applicable, a dotted vertical line indicates the split ",
+                    "between the categories falling into the left vs. the right ",
+                    "range."
+                  )),
+                  "Percentiles:"
+                ),
+                min=0, max=1, step=.05, value=c(.3, .7), width="100%"
+              )
             )
           ),
           conditionalPanel(condition="input.tabsetPanel == 'Loadings Table'",
