@@ -22,8 +22,8 @@ function kontextSearch() {
   }
   var corpname = document.getElementById("click_info").textContent.includes("cpact") ? "cpact" : "koditex";
   var cql = document.querySelector("#cql").value + within;
-  var url = "https://kontext.korpus.cz/first?corpname=" + corpname +
-    "&queryselector=cqlrow&default_attr=word&cql=" + encodeURIComponent(cql);
+  var url = "https://korpus.cz/kontext/create_view?corpname=" + corpname +
+    "&default_attr=word&q=q" + encodeURIComponent(cql);
   console.log(url);
   window.open(url, "_blank");
 }
