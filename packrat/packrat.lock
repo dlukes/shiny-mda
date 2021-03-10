@@ -403,8 +403,8 @@ Requires: htmltools, shiny
 
 Package: shinyCNC
 Source: CNCRAN
-Version: 0.1.3
-Hash: b19b1bd836941bd9b64f3edb91748ff4
+Version: 0.1.4
+Hash: a4b6eff4c2a07776c70e5f2ee080742d
 Requires: httr, jsonlite, shiny
 
 Package: sourcetools
