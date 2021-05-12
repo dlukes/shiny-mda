@@ -308,11 +308,11 @@ function(input, output, session) {
     non_koditex_ids <- setdiff(rownames(fdf), globalMeta$id)
     non_koditex_chunks <- fdf[non_koditex_ids, ] %>%
       rownames_to_column("id") %>%
-      select(id, mode=MODE, division=DIVISION_ORIG)
-    # consider all additional chunks extracted from results as include=yes,
-    # otherwise the user would have to change this manually every time, because
-    # we want to keep force_include=TRUE for Koditex data
-    non_koditex_chunks$include <- "yes"
+      select(id, mode=MODE, division=DIVISION_ORIG) %>%
+      # consider all additional chunks extracted from results as include=yes,
+      # otherwise the user would have to change this manually every time, because
+      # we want to keep force_include=TRUE for Koditex data
+      mutate(include="yes")
     bind_rows(globalMeta, non_koditex_chunks) %>%
       replace(is.na(.), "-NA-")
   })
