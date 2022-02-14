@@ -17,7 +17,7 @@ User=nobody
 # on the same server
 Environment=SHINY_APP_PORT=10003
 Environment=SHINY_CNC_LOG_FILE=/opt/access_logs/mdavis.log
-Environment=PATH=/opt/R/versions/3.6.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+Environment=PATH=/opt/R/versions/3.6.3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
 # write out absolute path to your run.R wrapper...
 ExecStart=/opt/web/mdavis/run.R
 # ... and your app's parent dir
